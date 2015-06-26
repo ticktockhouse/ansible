@@ -1,0 +1,5 @@
+# Do some centos-y stuff here, use yum, that sort of thing...
+
+- name: Install clamav
+  yum: pkg=clamav state=latest
+

@@ -1,0 +1,15 @@
+---
+- name: See if this machine has been touched yet
+  stat: path=/usr/sbin/sendmail.postfix-wrapper
+  register: wr
+
+- name: See if sendmail.postfix exists, if it does, it means we can run the main bit of the role
+  stat: path=/usr/sbin/sendmail.postfix
+  register: sp
+
+- name: Fail if the file already exists
+  debug: msg="Looks like this has already been run, exiting here so as not to damage anything"
+  when: wr.stat.exists
+
+- include: postfix.yml
+  when: sp.stat.isreg

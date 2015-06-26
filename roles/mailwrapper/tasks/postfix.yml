@@ -1,0 +1,12 @@
+---
+- name: Create mail.send log file
+  file: path=/var/tmp/mail.send state=touch mode=0666
+
+- name: Copy sendmail.postfix-wrapper into place
+  copy: src=sendmail.postfix-wrapper dest=/usr/sbin/sendmail.postfix-wrapper owner=root group=root mode=0655
+
+- name: Move original sendmail-postfix out of the way
+  shell: mv /usr/sbin/sendmail.postfix /usr/sbin/sendmail.postfix-bin creates=/usr/sbin/sendmail.postfix-bin
+
+- name: Create symlink to our wrapper script
+  file: src=/usr/sbin/sendmail.postfix-wrapper dest=/usr/sbin/sendmail.postfix state=link

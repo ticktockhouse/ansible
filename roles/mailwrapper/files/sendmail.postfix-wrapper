@@ -1,0 +1,3 @@
+#!/bin/sh
+
+(echo X-Additional-Header: $PWD ;cat) | tee -a /var/tmp/mail.send | /usr/sbin/sendmail.postfix-bin "$@"

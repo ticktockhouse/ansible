@@ -1,0 +1,25 @@
+---
+- name: Make sure no old maldet folders are lurking here
+  shell: rm -rf /root/maldetect* removes=/root/maldetect-* 
+
+- name: Download maldet
+  get_url: url={{ maldet_download }} dest=/root/maldetect-jerry.tgz sha256sum=73bbafac73a93fb250715c558b23473b59739d7b5143557fd6a4ac4cb6fd5cbe
+
+- name: Untar maldet
+  shell: tar xvzf maldetect-jerry.tgz chdir=/root
+
+- name: Run the maldet installer
+  shell: ./install.sh chdir=/root/maldetect-install creates=/usr/local/maldetect
+
+- name: Copy over conf.maldet
+  template: src=conf.maldet.j2 dest=/usr/local/maldetect/conf.maldet owner=root group=root mode=0644
+  tags: conf.maldet
+
+- name: Copy over daily scan script
+  template: src=maldet_scan.sh.j2 dest=/usr/local/bin/maldet.sh owner=root group=root mode=0755
+
+- name: Use cron to schedule regular scans
+  cron: name="Daily maldet scans" minute="0" hour="2" job="/usr/local/bin/maldet.sh"
+
+- name: Increase inotify watches
+  sysctl: name="fs.inotify.max_user_watches" value=480000 state=present reload=yes sysctl_set=yes

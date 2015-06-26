@@ -1,0 +1,4 @@
+# Do some Debian-based things here, like using apt
+
+- name: Install clamav (Debian)
+  apt: pkg=clamav state=latest update-cache=yes
