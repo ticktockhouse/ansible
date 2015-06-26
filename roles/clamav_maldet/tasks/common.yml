@@ -3,10 +3,10 @@
   shell: rm -rf /root/maldetect* removes=/root/maldetect-* 
 
 - name: Download maldet
-  get_url: url={{ maldet_download }} dest=/root/maldetect-jerry.tgz sha256sum=73bbafac73a93fb250715c558b23473b59739d7b5143557fd6a4ac4cb6fd5cbe
+  get_url: url={{ maldet_download }} dest=/root/{{ maldet_download_file }} sha256sum=73bbafac73a93fb250715c558b23473b59739d7b5143557fd6a4ac4cb6fd5cbe
 
 - name: Untar maldet
-  shell: tar xvzf maldetect-jerry.tgz chdir=/root
+  shell: tar xvzf {{ maldet_download_file }} chdir=/root
 
 - name: Run the maldet installer
   shell: ./install.sh chdir=/root/maldetect-install creates=/usr/local/maldetect
