@@ -1,0 +1,8 @@
+#!/bin/bash
+
+PLAYBOOKS=$(ls -1 ./*.yml)
+
+for i in $PLAYBOOKS; do
+ 	PLAYBOOK_NAME=$(echo "$i" | awk -F "." '{print $1}')
+	sed -e '2s/.*/- hosts: localhost/' -e '3i\ \ connection: local ' "$PLAYBOOK_NAME".yml > "${PLAYBOOK_NAME}"_local.yml
+done
