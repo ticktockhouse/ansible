@@ -1,0 +1,4 @@
+---
+packager: apt
+mysql_python: python-mysqldb
+mysql_service: mysql

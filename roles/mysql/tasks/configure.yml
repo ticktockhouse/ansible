@@ -1,0 +1,8 @@
+---
+- name: stat the file to see if it's 1st time round
+  stat: path=/etc/mysql.installed
+  register: mysql_installed
+
+- name: Copy empty-password .my.cnf
+  template: src=my.cnf.empty.j2 dest=/root/my.cnf owner=root group=root mode=0644
+  when: mysql_installed.stat.exists == False

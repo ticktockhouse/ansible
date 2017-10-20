@@ -1,0 +1,10 @@
+---
+- name: Install MySQL packages
+  apt: pkg={{item}} state=installed
+  with_items:
+    - mysql-server
+    - mysql-client
+    - python-mysqldb
+
+- name: Ensure MySQL is started after initial install.
+  service: name=mysql state=started enabled=true
