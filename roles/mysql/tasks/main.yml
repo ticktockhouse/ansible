@@ -1,0 +1,21 @@
+---
+- name: Are we plesk-ified?
+  stat: path=/usr/local/psa/version
+  register: plesk_version
+
+- debug: msg={{ plesk_version }}
+
+- include: centos.yml
+  when: ansible_distribution == 'CentOS'
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+
+- include: plesk.yml
+  static: no
+  when: plesk_version.stat.exists == 'true'
+
+- include: configure.yml
+- include: secure.yml
+- include: databases.yml
+  tags: dbs

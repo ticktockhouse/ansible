@@ -1,0 +1,11 @@
+- debug: msg="Starting the plesk playbook, probably erroneously :)"
+
+- name: Glean the mysql password
+  shell: cat /etc/psa/.psa.shadow
+  register:  root_db_password_var
+
+- debug: msg={{ root_db_password_var }}
+
+- set_fact: root_db_password="{{ root_db_password_var.stdout }}"
+
+- set_fact: root_db_user="admin"

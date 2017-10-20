@@ -1,0 +1,11 @@
+---
+- name: Configure mysql DBs
+  mysql_db: name={{ item.key }} state=present
+  with_dict: "{{ mysql_dbs }}"
+  when: mysql_dbs is defined
+
+- name: Configure mysql users
+  mysql_user: name={{ item.value.user }} password={{ item.value.pass }} host={{ item.value.accessible_from | default('localhost')}} priv={{ item.key }}.*:ALL state=present
+  with_dict: "{{ mysql_dbs }}"
+  when: mysql_dbs is defined
+  tags: mysql_users

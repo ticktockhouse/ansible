@@ -1,0 +1,4 @@
+---
+packager: yum
+mysql_python: MySQL-python
+mysql_service: mysqld
