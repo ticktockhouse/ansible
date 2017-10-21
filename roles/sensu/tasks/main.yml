@@ -1,0 +1,23 @@
+---
+#- name: Source the main vars file - used for clients and master
+#  include_vars: ~jerry/ansible-hacking/sensu_vars.yml
+#  tags: 
+#   - sensuserver
+#   - sensuclient
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian' 
+  tags: install
+
+- include: redhat.yml
+  when: ansible_os_family == 'RedHat' 
+  tags: install
+
+- include: client.yml
+  when: sensuclient == True 
+
+- include: server.yml
+  when: sensuserver == True 
+
+- include: uchiwa.yml
+  when: uchiwa_enabled == True

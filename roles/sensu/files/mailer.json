@@ -1,0 +1,10 @@
+{
+	"mailer": {
+		"admin_gui": "http://pantry.ticktockhouse.co.uk:3000/",
+		"mail_from": "sensu@example.com",
+		"mail_to": "ticktockhouse@gmail.com",
+		"smtp_address": "localhost",
+		"smtp_domain": "ticktockhouse.co.uk",
+		"smtp_port": "25"
+	}
+}
