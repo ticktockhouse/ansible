@@ -1,0 +1,43 @@
+---
+- include_vars: ~jerry/ansible-hacking/vars_sensu_checks.yml
+  tags: sensuclient
+
+- debug: msg="sensu_plugins_gem is {{ sensu_plugins_gem }}"
+  when: sensu_plugins_gem is defined
+
+- name: Use embedded Ruby
+  lineinfile: dest=/etc/default/sensu regexp="^EMBEDDED" line="EMBEDDED_RUBY=true"
+  tags: embruby
+
+- name: Copy rabbitmq.json in
+  template: src=rabbitmq.json.j2 dest=/etc/sensu/conf.d/rabbitmq.json owner=root group=root
+  notify: restart sensu-client
+
+- name: Make the SSL directory
+  file: path=/etc/sensu/ssl owner=root group=root mode=0755 state=directory
+
+- name: Copy over SSL stuff
+  copy: src={{ item }} dest=/etc/sensu/ssl/{{ item | basename }}  mode=0600 owner=sensu group=sensu
+  with_items:
+   - "{{ sensu_client_cert }}"
+   - "{{ sensu_client_key }}"
+
+- name: Copy client config in
+  template: src=client.json.j2 dest=/etc/sensu/conf.d/client.json owner=root group=root backup=yes
+  notify: restart sensu-client
+  tags: sensuclient
+
+- name: Copy the template checks in
+  template: src=checks.json.j2 dest=/etc/sensu/conf.d/checks.json backup=yes
+  notify: restart sensu-client
+  tags: sensuclient
+
+- name: Copy relevant plugins to plugins/ directory
+  copy: src=plugins/ dest=/etc/sensu/plugins/ owner=sensu group=sensu mode=0755
+  tags: copyplugins
+
+- name: Install defined plugins via gem
+  gem: name={{ item.key }} version={{ item.value.version }} state=present executable=/opt/sensu/embedded/bin/gem
+  with_dict: "{{ sensu_plugins_gem }}"
+  when: sensu_plugins_gem is defined
+# Could probably only copy necessary plugins somehow

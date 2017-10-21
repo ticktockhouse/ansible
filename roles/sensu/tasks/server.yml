@@ -1,0 +1,65 @@
+---
+- name: Configure rabbitmq
+  template: src=rabbitmq.json.j2 dest=/etc/sensu/conf.d/rabbitmq.json 
+
+- name: Configure redis
+  template: src=redis.json.j2 dest=/etc/sensu/conf.d/redis.json
+
+- name: Copy over SSL stuff
+  copy: src={{ item }} dest=/etc/sensu/ssl/{{ item | basename }}  mode=0600 owner=sensu group=sensu
+  with_items:
+   - "{{ sensu_client_cert }}"
+   - "{{ sensu_client_key }}"
+
+- name: Copy over THE MUTATOR(s)!!!
+  copy: src={{ item }} dest=/etc/sensu/mutators/{{ item }}
+  with_items:
+    - graphite.rb
+
+- name: Configure THE MUTATOR(s)!!!
+  template: src=mutators.json.j2 dest=/etc/sensu/conf.d/mutators.json
+  notify: restart sensu-server
+
+- name: Copy the template checks in
+  template: src=checks.json.j2 dest=/etc/sensu/conf.d/checks.json backup=yes
+  notify: restart sensu-server
+
+- name: Copy the mailer.rb handler in
+  copy: src={{ item }} dest=/etc/sensu/handlers/{{ item }}
+  with_items:
+    - mailer.rb
+
+- name: Copy handler definitions in
+  template: src=handlers.json.j2 dest=/etc/sensu/conf.d/handlers.json backup=yes
+  notify: restart sensu-server
+
+# "to_nice_json" doesn't seem to work for this unfortunately, commenting out till we find a solution
+#- name: Copy in mailer.json config for "mailer" handler
+#  template: src=mailer.json.j2 dest=/etc/sensu/conf.d/mailer.json backup=yes
+#  notify: restart sensu-server
+#  tags: mailer_config
+
+- name: Copy in mailer.json config for "mailer" handler
+  copy: src=mailer.json dest=/etc/sensu/conf.d/mailer.json backup=yes
+  notify: restart sensu-server
+  tags: mailer_config
+
+
+- name: Fix permissions
+  file: path=/etc/sensu/{{ item }} mode=u=rwX,g=rX,o=rx owner=sensu group=sensu recurse=yes
+  with_items:
+    - handlers
+    - mutators
+    - plugins
+  tags: perms
+
+- name: Fix permissions
+  file: path=/etc/sensu/{{ item }} mode=u=rwX,g=rX,o=rx owner=sensu group=sensu recurse=yes
+  with_items:
+    - handlers
+    - mutators
+    - plugins
+  tags: perms
+ 
+
+# Ideally install the "mail" gem somehow...

@@ -1,0 +1,45 @@
+---
+sensu_server: {{ defined_sensu_server }}
+rabbitmq_server: {{ defined_rabbitmq_server }}
+rabbitmq_port: 5671
+rabbitmq_password: {{ defined_rabbitmq_password }}
+rabbitmq_conf:
+  rabbitmq:
+    ssl:
+     cert_chain_file: /etc/sensu/ssl/cert.pem
+     private_key_file: /etc/sensu/ssl/key.pem
+    host: "{{ sensu_rabbitmq_server }}"
+    port: "{{ sensu_rabbitmq_port }}"
+    vhost: /sensu
+    user: sensu
+    password: "{{ rabbitmq_password }}"
+sensu_client_cert: files/client/cert.pem
+sensu_client_key: files/client/key.pem
+sensu_sub:
+  - default
+sensu_plugins:
+  - disk-usage-metrics.rb
+  - cpu-metrics.rb
+  - load-metrics.rb
+  - apache-graphite.rb
+sensu_mailer_parms:
+  mailer:
+    admin_gui: {{ sensu_admin_gui_url }}
+    mail_from: {{ sensu_mail_from_address }}
+    mail_to: {{ sensu_mail_to_address }}
+    smtp_address: localhost
+    smtp_port: 25
+    smtp_domain: {{ sensu_smtp_domain }}
+sensuclient: True
+sensuserver: False
+uchiwa_enabled: False
+sensu_client:
+  client:
+    name: "{{ inventory_hostname }}"
+    address: "{{ ansible_default_ipv4.address }}"
+    subscriptions: "{{ sensu_sub }}"
+sensu_client_additions: []
+sensu_api:
+  api:
+    host: "{{ sensu_api_host }}"
+    port: 4567

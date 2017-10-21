@@ -1,0 +1,7 @@
+---
+- name: Add Sensu repo key
+  apt_key: url=http://repos.sensuapp.org/apt/pubkey.gpg
+
+- name: Install Sensu APT repo
+  apt_repository: repo='deb http://repos.sensuapp.org/apt sensu main' state=present
+
