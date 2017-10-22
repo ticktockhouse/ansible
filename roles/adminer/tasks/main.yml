@@ -1,0 +1,22 @@
+---
+- include_vars: "{{ item }}"
+  with_first_found:
+   - "{{ ansible_distribution }}.yml"
+   - "{{ ansible_os_family }}.yml"
+   - "default.yml"
+
+- name: Create the adminer directory
+  file: path={{ adminer_dir }} state=directory owner={{ web_server_user }} group ={{ web_server_group }} mode=0755
+
+- name: create the htpasswd file if necessary
+  file: path={{ htpasswd_file }} state=touch owner=root group=root mode=0744
+ 
+- name: Add the adminer htpasswd
+  lineinfile: dest={{ htpasswd_file }} line="{{ adminer_username }}:{{ adminer_password }}" state=present
+
+- name: Copy the adminer file over
+  copy: src=adminer.php dest={{ adminer_dir }}/adminer.php owner={{ web_server_user }} group={{ web_server_group }} mode=0644
+
+- name: Copy over the adminer vhost config
+  template: src=adminer.vhost.j2 dest=/etc/{{ apache }}/{{ vhost_dir }}/adminer.conf owner=root group=root mode=0644
+  notify: restart apache

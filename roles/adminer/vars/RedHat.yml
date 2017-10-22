@@ -1,0 +1,6 @@
+---
+web_server_user: apache
+web_server_group: apache
+apache: httpd
+apache_service: httpd
+vhost_dir: conf.d

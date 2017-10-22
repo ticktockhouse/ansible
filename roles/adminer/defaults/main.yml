@@ -1,0 +1,3 @@
+---
+htpasswd_file: /var/www/htpasswd
+adminer_username: adminer
