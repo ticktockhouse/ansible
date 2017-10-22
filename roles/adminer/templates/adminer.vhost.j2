@@ -1,0 +1,22 @@
+DirectoryIndex adminer.php
+
+<VirtualHost *:80>
+  ServerName {{ adminer_url }}
+  ServerAlias {{ adminer_url }}
+  DocumentRoot {{ adminer_dir }}
+
+  <Directory "{{ adminer_dir }}">
+    AllowOverride All
+    Options -Indexes +FollowSymLinks
+    Order allow,deny
+    Allow from all
+    Authtype Basic
+    Authname "Adminer"
+    AuthBasicProvider file
+    AuthUserFile {{ htpasswd_file }}
+    Require valid-user
+  </Directory>
+  CustomLog /var/log/{{ apache }}/adminer-access.log common
+  ErrorLog /var/log/{{ apache }}/adminer-error.log
+
+</VirtualHost>

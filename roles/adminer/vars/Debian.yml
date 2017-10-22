@@ -1,0 +1,6 @@
+---
+web_server_user: www-data
+web_server_group: www-data
+apache: apache2
+apache_service: apache2
+vhost_dir: sites-enabled
