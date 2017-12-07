@@ -1,0 +1,12 @@
+---
+- name: Ensure /etc/iptables exists
+  file: state=directory path=/etc/iptables mode=0644 owner=root group=root
+  
+- name: Install mosh
+  package: name=mosh state=present
+
+- name: Sort out iptables 
+  iptables_raw:
+    name: Allow mosh
+    rules: '-A INPUT -p udp --dport 60000:61000 -j ACCEPT'
+    weight: 1
