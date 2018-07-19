@@ -1,0 +1,23 @@
+fail2ban_logtarget: "/var/log/fail2ban.log"
+fail2ban_loglevel: "INFO"
+fail2ban_dbfile: "/var/lib/fail2ban/fail2ban.sqlite3"
+fail2ban_dbpurgeage: "86400"
+fail2ban_bantime: "600"
+fail2ban_findtime: "600"
+fail2ban_maxretry: "3"
+fail2ban_backend: "auto"
+fail2ban_usedns: "no"
+fail2ban_jaild: "/etc/fail2ban/jail.d"
+
+fail2ban_services_default:
+  - name: ssh
+    filter: "sshd"
+    action: "iptables[name=SSH, port=ssh, protocol=tcp]"
+    logpath: "{{ fail2ban_auth_log_file }}"
+    maxretry: "5"
+  - name: recidive
+    logpath: "{{ fail2ban_logtarget }}"
+    action: "iptables-allports[name=recidive]"
+    bantime: "604800"
+    findtime: "86400"
+    maxretry: "5"

@@ -1,5 +1,2 @@
 - name: Install fail2ban (Centos)
   yum: pkg=fail2ban state=latest
-
-- name: Turn on SSH jail by default
-  ini_file: dest=/etc/fail2ban/jail.conf section=ssh-iptables option=enabled value=true

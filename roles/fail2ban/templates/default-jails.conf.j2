@@ -1,13 +1,13 @@
-{% if fail2ban_services is iterable %}
-{% for service in fail2ban_services %}
-[{{ service.name }}]
+{% if fail2ban_services_default is iterable %}
+{% for service in fail2ban_services_default %}
 
+[{{ service.name }}]
 enabled = {{ service.enabled|default("true") }}
 {% if service.port is defined %}
 port = {{ service.port }}
 {% endif %}
 {% if service.filter is defined %}
-maxretry = {{ service.filter }}
+filter = {{ service.filter }}
 {% endif %}
 logpath = {{ service.logpath }}
 {% if service.maxretry is defined %}
