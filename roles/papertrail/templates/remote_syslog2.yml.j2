@@ -1,0 +1,6 @@
+files:
+{{ papertrail_logs_monitored | to_nice_yaml | indent( width=2, indentfirst=True ) }}
+destination:
+  host: {{ papertrail_log_server }}
+  port: {{ papertrail_log_server_port }}
+  protocol: tls

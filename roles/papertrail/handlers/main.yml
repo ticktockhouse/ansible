@@ -1,0 +1,7 @@
+- name: restart rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+
+- name: daemon reload
+  command: systemctl daemon-reload

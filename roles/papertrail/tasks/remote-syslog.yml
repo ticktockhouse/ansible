@@ -1,0 +1,24 @@
+---
+- name: Download the given release
+  get_url:
+    url: "{{ papertrail_remote_syslog_url }}"
+    dest: "{{ papertrail_remote_syslog_local }}"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Install remote_syslog2
+  package:
+    name: "{{ papertrail_remote_syslog_local }}"
+    state: present
+
+- name: Put the config file in place
+  template:
+    src: remote_syslog2.yml.j2
+    dest: "{{ papertrail_remote_syslog2_cfg_file }}"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Start remote_syslog2
+  shell: remote_syslog -c "{{ papertrail_remote_syslog2_cfg_file }}"
