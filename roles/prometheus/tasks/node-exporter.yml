@@ -1,0 +1,37 @@
+
+- name: Download node-exporter tarball
+  get_url:
+    url: "{{ node_exporter_download_url }}"
+    dest: "{{ node_exporter_download_location }}" 
+    checksum: "sha256:{{ node_exporter_sha256sum }}"
+
+- name: Extract said tarball
+  unarchive:
+    src: "{{ node_exporter_download_location }}"  
+    dest: "/root/"
+    remote_src: true
+
+- name: Copy the binaries over
+  copy:
+    src: /root/{{ node_exporter_prefix }}/{{ item }}
+    dest: /usr/local/bin/{{ item }}
+    owner: node_exporter
+    group: node_exporter
+    mode: 0500
+    remote_src: true
+  with_items: "{{ node_exporter_binaries }}"
+
+- name: Add node_exporter systemd unit
+  template:
+    src: node_exporter.service
+    dest: /etc/systemd/system/node_exporter.service
+    owner: root
+    group: root
+    mode: 0644
+  notify: daemon reload
+
+- name: Enable and start node_exporter service
+  service:
+    name: node_exporter
+    state: started
+    enabled: yes

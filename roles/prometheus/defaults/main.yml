@@ -1,0 +1,25 @@
+prometheus_users:
+  - prometheus
+  - node_exporter
+prometheus_dirs:
+  - "/var/lib/prometheus"
+  - "/etc/prometheus"
+prometheus_download_url: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/{{ prometheus_tarball }}"
+prometheus_prefix: "prometheus-{{ prometheus_version }}.linux-amd64"
+prometheus_tarball: "{{ prometheus_prefix }}.tar.gz"
+prometheus_download_location: "/root/{{ prometheus_tarball }}"
+prometheus_version: "2.4.0"
+prometheus_sha256sum: "87bf22b527d34bb561ae0e93f59d9edd4e53bcd7f28a0b848ac8ca58ff9ff9a9"
+prometheus_binaries:
+  - prometheus
+  - promtool
+prometheus_console_dirs:
+  - consoles
+  - console_libraries
+node_exporter_download_url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/{{ node_exporter_tarball }}"
+node_exporter_prefix: "node_exporter-{{ node_exporter_version }}.linux-amd64"
+node_exporter_tarball: "{{ node_exporter_prefix }}.tar.gz"
+node_exporter_download_location: "/root/{{ node_exporter_tarball }}"
+node_exporter_version: "0.16.0"
+node_exporter_sha256sum: "e92a601a5ef4f77cce967266b488a978711dabc527a720bea26505cba426c029"
+node_exporter_binaries: node_exporter
