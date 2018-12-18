@@ -1,0 +1,7 @@
+remi_php_package: "http://rpms.remirepo.net/enterprise/remi-release-7.rpm"
+epel_repo_package: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
+remi_default_packages:
+  - "{{ epel_repo_package }}"
+  - "{{ remi_php_package }}"
+  - yum-utils
+php_fpm_config: socket

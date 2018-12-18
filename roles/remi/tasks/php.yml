@@ -1,0 +1,65 @@
+- name: Enable PHP 7.2 repo
+  yum_repository:
+    name: remi-php72
+    enabled: yes
+    baseurl: "{{ remi_php_baseurl }}"
+    description: remi-php72
+    gpgkey: /etc/pki/rpm-gpg/RPM-GPG-KEY-remi
+
+- name: Install php packages
+  package:
+    name: "{{ remi_php_packages }}"
+    state: present
+
+- name: Ensure httpd is installed before next step
+  package:
+    name: httpd
+    state: present
+
+- name: Template mpm.conf
+  template:
+    src: mpm.conf
+    dest: /etc/httpd/conf.modules.d/00-mpm.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart apache
+  when: php_fpm is defined
+
+- name: Template php.conf
+  template:
+    src: apache-php.conf
+    dest: /etc/httpd/conf.d/php.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart apache
+  when: php_fpm is defined
+
+- name: Template php-fpm's www.conf
+  template:
+    src: php-fpm-www.j2
+    dest: "{{ php_fpm_www_conf_location }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart {{ php_fpm_service }}
+  when: php_fpm is defined
+
+- name: Enable php-fpm to start on boot
+  service:
+    name: "{{ php_fpm_service }}"
+    enabled: yes
+  when: php_fpm is defined
+
+- name: Ensure php-fpm is started
+  service:
+    name: "{{ php_fpm_service }}"
+    state: started
+  when: php_fpm is defined
+
+- name: Ensure apache is started
+  service:
+    name: httpd
+    state: started
+  when: php_fpm is defined

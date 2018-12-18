@@ -1,0 +1,4 @@
+- include_tasks: common.yml
+- include_vars: php72.yml
+  when: remi_php_version == 7.2
+- include_tasks: php.yml

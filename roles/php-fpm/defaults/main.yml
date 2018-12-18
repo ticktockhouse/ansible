@@ -1,0 +1,6 @@
+php_fpm_centos_packages:
+  - httpd
+  - httpd-tools
+  - mod_ssl
+php_fpm_socket: /var/run/php-fpm/default.sock
+php_fpm_config: socket
