@@ -1,0 +1,30 @@
+---
+- name: Include pesky OS-specific vars
+  include_vars: "{{ item }}"
+  with_items:
+     - "{{ ansible_os_family }}.yml"
+
+- include: redhat.yml
+  when: ansible_os_family == 'RedHat'
+
+- name: Add user(s)!
+  user:
+    name: "{{ item.name }}"
+    shell: "{{ item.shell | default(omit) }}"
+    groups: "{{ item.groups | default(omit) }}"
+    password: "{{ item.password | default(omit) }}"
+  with_items: "{{ login_users }}"
+
+- name: Add authorized keys
+  authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ lookup('file', 'files/'+ item.name + '.key.pub') }}"
+  with_items: "{{ login_users }}"
+
+- name: Give defined users sudo privileges !
+  user:
+    name: "{{ item.name }}"
+    groups: "{{ sudo_group }}"
+    append: yes
+  when: item.sudo is defined and item.sudo
+  with_items: "{{ login_users }}"
