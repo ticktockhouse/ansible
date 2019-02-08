@@ -2,7 +2,7 @@
 
 Vagrant.configure('2') do |config|
 
-	droplet_name = `basename $PWD`.chomp
+	droplet_name = "addjerry-test"
 
   config.vm.define "#{droplet_name}" do |config|
     config.vm.provider :digital_ocean do |provider, override|

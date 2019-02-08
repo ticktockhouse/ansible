@@ -20,6 +20,7 @@
     user: "{{ item.name }}"
     key: "{{ lookup('file', 'files/'+ item.name + '.key.pub') }}"
   with_items: "{{ login_users }}"
+  ignore_errors: yes
 
 - name: Give defined users sudo privileges !
   user:
