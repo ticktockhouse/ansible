@@ -10,7 +10,7 @@
 - name: Add user(s)!
   user:
     name: "{{ item.name }}"
-    shell: "{{ item.shell | default(omit) }}"
+    shell: "{{ item.shell | default('/bin/bash') }}"
     groups: "{{ item.groups | default(omit) }}"
     password: "{{ item.password | default(omit) }}"
   with_items: "{{ login_users }}"
