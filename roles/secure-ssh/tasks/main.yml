@@ -1,0 +1,67 @@
+---
+- include_vars: "{{ ansible_os_family }}.yml"
+
+#- name: Add identity key to authorized keys on host
+#  authorized_key:
+    #user: {{ ssh_user }}
+#    key: "{{ lookup('file', ssh_identity_key) }}"
+#  register: add_identity_key
+#  when: ssh_identity_key is defined and ssh_user is defined
+
+- name: Make sure we have an authorized_keys file for ssh_users before disabling passwords
+  stat:
+    path: ~{{ssh_user}}/.ssh/authorized_keys
+  register: authkeys
+  when: no_passwords is defined
+
+- name: Make sure sudoers.d exists
+  file:
+    path: /etc/sudoers.d
+    owner: root
+    group: root
+    mode: 0750
+    state: directory
+
+- name: Include sudoers.d
+  lineinfile:
+    dest: /etc/sudoers
+    line: "#includedir /etc/sudoers.d"
+    insertafter: EOF
+
+- name: Enable wheel group
+  template:
+    src: wheel.sudo
+    dest: /etc/sudoers.d/wheel
+    owner: root
+    group: root
+    mode: 0440
+
+- name: Disable empty password login
+  lineinfile:
+    dest: {{ sshd_config }}
+    regexp: "^#?PermitEmptyPasswords"
+    line: "PermitEmptyPasswords no"
+  notify: restart sshd
+
+- name: Disable remote root login
+  lineinfile:
+    dest: {{ sshd_config }}
+    regexp: "^#?PermitRootLogin"
+    line: "PermitRootLogin no"
+  notify: restart sshd
+
+- name: Disable password login
+  lineinfile:
+    dest: {{ sshd_config }}
+    regexp: "^#?PasswordAuthentication"
+    line: "PasswordAuthentication no"
+#  when: add_identity_key|success and not add_identity_key|skipped
+  when: authkeys.stat.size !:  0 and no_passwords is defined
+  notify: restart sshd
+
+- name: Enable PAM
+  lineinfile:
+    dest: {{ sshd_config }}
+    regexp: "^#?UsePAM"
+    line: "UsePAM yes"
+  notify: restart sshd
