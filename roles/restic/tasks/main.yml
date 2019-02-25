@@ -1,0 +1,57 @@
+- name: Download restic archive
+  get_url:
+    url: "{{ restic_archive_url }}"
+    dest: "./restic_{{ restic_version }}_linux_amd64.bz2"
+    checksum: "sha256:{{ restic_checksum }}"
+
+- name: Unarchive it
+  #unarchive:
+    #src: "/root/restic_{{ restic_version }}_linux_amd64.bz2"
+    #dest: "/root/"
+    #remote_src: yes
+  shell: bunzip2 ./restic_{{ restic_version }}_linux_amd64.bz2
+  args:
+    creates: ./restic_{{ restic_version }}_linux_amd64
+
+- name: Copy the file to /usr/local/bin
+  copy:
+    src:  ./restic_{{ restic_version }}_linux_amd64
+    dest: /usr/local/bin/restic
+    owner: root
+    group: root
+    mode: 0755
+    remote_src: yes
+  become: yes
+
+- set_fact:
+    restic_password: "{{ lookup('password', 'dev/null length=32') }}"
+
+- name: Create the repo if it doesn't exist
+  shell: "restic -r {{ restic_repo }} init --password-command='echo {{ restic_password }}'"
+  register: repo_init
+  environment: "{{ restic_env }}"
+  ignore_errors: yes
+  
+
+#- name: Write an "initial backup" file
+  #when: repo_init.rc == 0
+
+- debug:
+    var: repo_init 
+
+
+#- name: Ensure the repo exists with the generated password
+  #shell: restic -r "{{ restic_repo }}" init 
+
+- name: Template the restic env var config file
+  template:
+    src: restic-env.j2
+    dest: .restic.cf
+    #owner: root
+    #group: root
+    mode: 0400
+
+#TODO:
+##- name: See if we have a password in credstash
+## Create cron script with relevant backup config(s)
+    
