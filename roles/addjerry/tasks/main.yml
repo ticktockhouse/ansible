@@ -7,6 +7,10 @@
 - include: redhat.yml
   when: ansible_os_family == 'RedHat'
 
+- name: Debug login_users
+  debug:
+    var: login_users
+
 - name: Add user(s)!
   user:
     name: "{{ item.name }}"
