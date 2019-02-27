@@ -7,7 +7,7 @@
   ServerName {{ vhost.domain }}
   ServerAlias www.{{ vhost.domain }}
   Documentroot "{{ apache_vhosts_root }}/{{ vhost.domain }}/httpdocs"
-  Redirect / https://{{ vhost.domain }}
+  Redirect / https://{{ vhost.domain }}/
 </VirtualHost>
 {% endif %}
 
