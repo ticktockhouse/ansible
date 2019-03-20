@@ -1,0 +1,23 @@
+---
+# Configure passwordless sudo
+
+- name: Make sure we have a 'wheel' group
+  group:
+    name: "{{ sudo_group }}"
+    state: present
+
+- name: Give defined users sudo privileges !
+  user:
+    name: "{{ item.name }}"
+    groups: "{{ sudo_group }}"
+    append: yes
+  when: item.sudo is defined and item.sudo
+  with_items: "{{ login_users }}"
+
+- name: Allow 'wheel' group to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: "^%{{ sudo_group }}"
+    line: "%{{ sudo_group }} ALL=(ALL) NOPASSWD: ALL"
+    validate: visudo -cf %s

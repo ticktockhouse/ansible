@@ -4,8 +4,6 @@
   with_items:
      - "{{ ansible_os_family }}.yml"
 
-- include: redhat.yml
-  when: ansible_os_family == 'RedHat'
 
 - name: Debug login_users
   debug:
@@ -26,10 +24,7 @@
   with_items: "{{ login_users }}"
   ignore_errors: yes
 
-- name: Give defined users sudo privileges !
-  user:
-    name: "{{ item.name }}"
-    groups: "{{ sudo_group }}"
-    append: yes
-  when: item.sudo is defined and item.sudo
-  with_items: "{{ login_users }}"
+- include_tasks: sudo.yml
+
+- include_tasks: disable.yml
+  when: secure_ssh is defined and secure_ssh

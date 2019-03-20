@@ -1,3 +1,9 @@
 - hosts: all
+  vars:
+    login_users:
+      - name: jerry
+        sudo: yes
+      - name: jerrysmate
+    secure_ssh: yes
   roles:
    - addjerry
