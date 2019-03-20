@@ -39,17 +39,32 @@
 - debug:
     var: repo_init 
 
-
 #- name: Ensure the repo exists with the generated password
   #shell: restic -r "{{ restic_repo }}" init 
 
 - name: Template the restic env var config file
   template:
     src: restic-env.j2
-    dest: .restic.cf
+    dest: "{{ restic_env_file }}"
     #owner: root
     #group: root
     mode: 0400
+
+- name: Create simple backup script with chosen directories, if they're defined..
+  template:
+    src: restic-backup.sh.j2
+    dest: /usr/local/bin/restic-backup.sh
+    owner: root
+    group: root
+    mode: 0755
+  when: restic_backup_dirs is defined and restic_backup_dirs
+
+- name: Create restic-excludes file
+  template:
+    src: restic-excludes.txt.j2
+    dest: "{{ restic_excludes_file }}"
+    mode: 0755
+    
 
 #TODO:
 ##- name: See if we have a password in credstash

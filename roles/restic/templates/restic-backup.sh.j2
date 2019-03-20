@@ -1,0 +1,4 @@
+source {{ restic_env_file }}
+{% for dir in restic_backup_dirs %}
+restic backup --verbose {{ dir }} --exclude-file={{ restic_excludes_file }}
+{% endfor %}

@@ -7,3 +7,5 @@ restic_repo: "b2:ticktockhouse-backups:{{ restic_slug }}"
 restic_env:
   B2_ACCOUNT_ID: "{{ restic_b2_account_id }}"
   B2_ACCOUNT_KEY: "{{ restic_b2_application_key }}"
+restic_env_file: "~/.restic.cf"
+restic_excludes_file: ./restic-excludes.txt
