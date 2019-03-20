@@ -1,25 +1,64 @@
 ---
 # Stick backup_user_password in host_vars/<hostname>, or in the governing playbook
+- set_fact:
+    backed_up_mysql_password: "{{ lookup('password', '/dev/null length=32') }}"
+
+- debug:
+    var: backed_up_mysql_password
+
 - name: Create "backup" mysql user
-  mysql_user: name=backup password={{ backed_up_mysql_password }} priv="*.*:SELECT,LOCK TABLES,SHOW DATABASES,RELOAD"
+  mysql_user:
+    name: backup
+    password: "{{ backed_up_mysql_password }}"
+    priv: "*.*:SELECT,LOCK TABLES,SHOW DATABASES,RELOAD"
 
 - name: Create "backup" UNIX user
-  user: name=bkup comment="Unprivileged user for backups" state=present password="*" 
+  user:
+    name: bkup
+    comment: "Unprivileged user for backups"
+    state: present
+    password: "*" 
 
 - name: Add bkup's .ssh directory
-  file: path=/home/bkup/.ssh state=directory mode=0700 owner=bkup group=bkup
+  file:
+    path: /home/bkup/.ssh
+    state: directory
+    mode: 0700
+    owner: bkup
+    group: bkup
 
 - name: Add (empty) authorized_keys file for bkup
-  file: path=/home/bkup/.ssh/authorized_keys state=touch mode=0600 owner=bkup group=bkup
+  file:
+    path: /home/bkup/.ssh/authorized_keys
+    state: touch
+    mode: 0600
+    owner: bkup
+    group: bkup
 
 - name: Copy .my.cnf into place
-  template: src=my.cnf.j2 dest=~bkup/.my.cnf owner=bkup group=bkup
+  template:
+    src: my.cnf.j2
+    dest: ~bkup/.my.cnf
+    owner: bkup
+    group: bkup
 
 - name: Mysql backup cron script
-  template: src=mysqldump.sh.j2 dest=/usr/local/bin/mysqldump.sh mode=0755
+  template:
+    src: mysqldump.sh.j2
+    dest: /usr/local/bin/mysqldump.sh
+    mode: 0755
 
 - name: Add cron job
-  cron: name="Dump individual mysql DBs" hour=1 minute=0 user=bkup job=/usr/local/bin/mysqldump.sh
+  cron:
+    name: "Dump individual mysql DBs"
+    hour: 1
+    minute: 0
+    user: bkup
+    job: /usr/local/bin/mysqldump.sh
 
 - name: Add mysqldump dir for er... mysql dumps
-  file: path={{ mysqldump_dir }} state=directory owner=bkup group=bkup
+  file:
+    path: "{{ mysqldump_dir }}"
+    state: directory
+    owner: bkup
+    group: bkup

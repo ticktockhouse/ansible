@@ -1,4 +1,2 @@
 ---
 mysqldump_dir: /var/mysqldump
-backup_web: True
-backed_up_mysql_password: "{{ lookup('password', '/dev/null length=32') }}"
