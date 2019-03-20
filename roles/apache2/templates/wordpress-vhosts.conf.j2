@@ -55,13 +55,13 @@
 	ErrorLog /var/log/httpd/{{ vhost.domain }}-error.log
 	LogLevel warn
   CustomLog /var/log/httpd/{{ vhost.domain }}-access.log combined
-  <Files wp-login.php>
-    AuthName "Admins Only"
-    AuthUserFile {{ htpasswd_file }}
-    AuthGroupFile /dev/null
-    AuthType basic
-    require valid-user
-  </Files>
+#  <Files wp-login.php>
+#    AuthName "Admins Only"
+#    AuthUserFile {{ htpasswd_file }}
+#    AuthGroupFile /dev/null
+#    AuthType basic
+#    require valid-user
+#  </Files>
   <Location /wp-admin/>
     AuthName "Admins Only"
     AuthUserFile {{ htpasswd_file }}
