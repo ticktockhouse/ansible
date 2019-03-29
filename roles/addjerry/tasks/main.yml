@@ -15,7 +15,26 @@
     shell: "{{ item.shell | default('/bin/bash') }}"
     groups: "{{ item.groups | default(omit) }}"
     password: "{{ item.password | default(omit) }}"
+    create_home: "{{ item.create_home | default('no') }}"
   with_items: "{{ login_users }}"
+
+- name: Create home dirs if necessary
+  user:
+    name: "{{ item.name }}"
+    create_home: "{{ item.create_home | default(omit) }}"
+    home: "{{ item.home | default(omit) }}"
+  with_items: "{{ login_users }}"
+
+- name: Add SSH key if needed
+  user:
+    name: "{{ item.name }}"
+    generate_ssh_key: "{{ item.gen_ssh | default(omit) }}"
+    ssh_key_bits: "4096"
+  with_items: "{{ login_users }}"
+  register: ssh_key_data
+
+- debug:
+    var: ssh_key_data
 
 - name: Add authorized keys
   authorized_key:
