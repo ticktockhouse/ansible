@@ -1,4 +1,14 @@
+#!/bin/bash
+
+set -e
+
 source {{ restic_env_file }}
+export TMPDIR={{ restic_tmp_dir }}
+
+mkdir -p $TMPDIR
+mkdir -p {{ restic_cache_dir }}
+touch {{ restic_excludes_file }}
+
 {% for dir in restic_backup_dirs %}
-restic backup --verbose {{ dir }} --exclude-file={{ restic_excludes_file }}
+{{ restic_bindir }}/restic backup --verbose {{ dir }} --exclude-file={{ restic_excludes_file }} --cache-dir {{ restic_cache_dir }}
 {% endfor %}

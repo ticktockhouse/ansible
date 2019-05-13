@@ -8,4 +8,7 @@ restic_env:
   B2_ACCOUNT_ID: "{{ restic_b2_account_id }}"
   B2_ACCOUNT_KEY: "{{ restic_b2_application_key }}"
 restic_env_file: "~/.restic.cf"
-restic_excludes_file: ./restic-excludes.txt
+restic_excludes_file: /root/restic-excludes.txt
+restic_bindir: /usr/local/bin
+restic_tmp_dir: /var/restic/tmp
+restic_cache_dir: /var/restic/cache

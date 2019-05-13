@@ -13,10 +13,10 @@
   args:
     creates: ./restic_{{ restic_version }}_linux_amd64
 
-- name: Copy the file to /usr/local/bin
+- name: Copy the file to "/usr/local/bin"
   copy:
-    src:  ./restic_{{ restic_version }}_linux_amd64
-    dest: /usr/local/bin/restic
+    src:  "./restic_{{ restic_version }}_linux_amd64"
+    dest: "{{ restic_bindir }}/restic"
     owner: root
     group: root
     mode: 0755
@@ -53,7 +53,7 @@
 - name: Create simple backup script with chosen directories, if they're defined..
   template:
     src: restic-backup.sh.j2
-    dest: /usr/local/bin/restic-backup.sh
+    dest: "{{ restic_bindir }}/restic-backup.sh"
     owner: root
     group: root
     mode: 0755
@@ -69,4 +69,7 @@
 #TODO:
 ##- name: See if we have a password in credstash
 ## Create cron script with relevant backup config(s)
+
+- include: cron.yml
+  when: restic_cron is defined and restic_cron
     
