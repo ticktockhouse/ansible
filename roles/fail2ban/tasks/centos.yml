@@ -1,2 +1,9 @@
+- name: Add EPEL
+  yum:
+    name: epel-release
+    state: present
+
 - name: Install fail2ban (Centos)
-  yum: pkg=fail2ban state=latest
+  yum:
+    name: fail2ban
+    state: present

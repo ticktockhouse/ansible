@@ -1,0 +1,22 @@
+- hosts: all
+  pre_tasks:
+    - yum:
+        name: httpd
+        state: present
+    - service:
+        name: httpd
+        state: started
+  vars:
+    fail2ban_services:
+      - name: "apache-wp-login"
+        filter: "apache-wp-login"
+        logpath: "/var/log/httpd/*access_log"
+        maxretry: "5"
+        findtime: "120"
+        port: "http,https"
+        failregex: | 
+          ^<HOST> .* "POST .*wp-login.php
+                      ^<HOST> .* "POST .*xmlrpc.php'
+        action: 'iptables-multiport[name=wordpress, port="http,https", protocol=tcp]'
+  roles:
+    - fail2ban
