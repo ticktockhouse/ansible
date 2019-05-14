@@ -58,7 +58,7 @@
 
 - name: Add mysqldump dir for er... mysql dumps
   file:
-    path: "{{ mysqldump_dir }}"
+    path: "{{ backed_up_mysqldump_dir }}"
     state: directory
     owner: bkup
     group: bkup

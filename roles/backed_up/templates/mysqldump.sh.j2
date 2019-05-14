@@ -1,19 +1,25 @@
 #! /bin/bash
 
-TIMESTAMP=`date +%F-%R`
-BACKUP_DIR={{ mysqldump_dir }}
+set -e
+
+TIMESTAMP=$(date +%F)
+BACKUP_DIR_ROOT={{ backed_up_mysqldump_dir }}
+BACKUP_DIR=$BACKUP_DIR_ROOT/$TIMESTAMP
+PRUNE_DATE="{{ backed_up_mysqldump_prune }} days ago"
+PRUNE_TO=$(date +%F -d "$PRUNE_DATE")
+PRUNE_DIR="$BACKUP_DIR_ROOT/$PRUNE_TO"
 MYSQL=/usr/bin/mysql
 MYSQLDUMP=/usr/bin/mysqldump
+DATABASES=$($MYSQL  -e "SHOW DATABASES;" | grep -Ev "(Database|information_schema)")
 
-#mkdir -p "$BACKUP_DIR/mysql"
-rm -rf $BACKUP_DIR/*
+mkdir -p $BACKUP_DIR
+rm -rf $PRUNE_DIR
 
-databases=`$MYSQL  -e "SHOW DATABASES;" | grep -Ev "(Database|information_schema)"`
 
 cd $BACKUP_DIR
 
-for db in $databases; do
-  $MYSQLDUMP --force --opt  --databases $db > $db.sql 2> /dev/null
+for db in $DATABASES; do
+  $MYSQLDUMP {{ backed_up_mysqldump_options }} $db > $db.sql 2> /dev/null
 done
 
-chown -R backup:backup $BACKUP_DIR
+chown -R {{ backed_up_user }}:{{ backed_up_group }} $BACKUP_DIR

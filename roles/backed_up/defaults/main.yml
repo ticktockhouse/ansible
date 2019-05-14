@@ -1,2 +1,6 @@
 ---
-mysqldump_dir: /var/mysqldump
+backed_up_mysqldump_dir: /var/mysqldump
+backed_up_mysqldump_options: "--single-transaction --quick --lock-tables=false"
+backed_up_mysqldump_prune: 5
+backed_up_user: bkup
+backed_up_group: bkup
