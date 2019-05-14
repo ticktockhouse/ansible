@@ -62,12 +62,12 @@
 #    AuthType basic
 #    require valid-user
 #  </Files>
-  <Location /wp-admin/>
-    AuthName "Admins Only"
-    AuthUserFile {{ htpasswd_file }}
-    AuthGroupFile /dev/null
-    AuthType basic
-    require valid-user
-  </Location>
+#   <Location /wp-admin/>
+#    AuthName "Admins Only"
+#    AuthUserFile {{ htpasswd_file }}
+#    AuthGroupFile /dev/null
+#    AuthType basic
+#    require valid-user
+#  </Location>
 </VirtualHost>
 {% endfor %}

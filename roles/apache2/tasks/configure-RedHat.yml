@@ -1,4 +1,8 @@
 ---
+- debug:
+    var: apache_ports_configuration_items
+    
+
 - name: Configure Apache.
   lineinfile:
     dest: "{{ apache_server_root }}/conf/{{ apache_daemon }}.conf"
@@ -32,7 +36,6 @@
     mode: 0644
     backup: yes
   notify: restart apache
-  when: apache_create_vhosts
   with_items: "{{ wordpress_vhosts }}"
   when: wordpress_vhosts is defined and wordpress_vhosts
   tags: wordpress
