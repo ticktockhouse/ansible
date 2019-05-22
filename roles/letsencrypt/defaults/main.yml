@@ -1,0 +1,10 @@
+letsencrypt_account_key: /etc/ssl/private/le-account.key
+letsencrypt_rsa_key_size: 2048
+letsencrypt_private_key_file: /etc/ssl/private/le-account.key
+letsencrypt_dir: /etc/letsencrypt
+letsencrypt_challenge_dir: "{{ letsencrypt_dir }}/challenge"
+letsencrypt_ssl_private: /etc/ssl/private
+letsencrypt_account_email: ticktockhouse@gmail.com
+letsencrypt_dirs:
+  - "{{ letsencrypt_dir }}"
+  - "{{ letsencrypt_challenge_dir }}"

@@ -1,0 +1,24 @@
+- name: Create letsencrypt dirs
+  file:
+    state: directory
+    path: "{{ item }}"
+    owner: root
+    group: root
+    mode: 0755
+  with_items: "{{ letsencrypt_dirs }}"
+
+- name: Create Lets Encrypt Account Key
+  command: "openssl genrsa -out {{ letsencrypt_account_key }}"
+  args:
+    creates: "{{ letsencrypt_account_key }}"
+
+- name: Protect the file
+  file:
+    path: "{{ letsencrypt_account_key }}"
+    owner: root
+    group: root
+    mode: 0600
+
+- include_tasks: cert-loop.yml
+  with_items: "{{ letsencrypt_domains }}"
+

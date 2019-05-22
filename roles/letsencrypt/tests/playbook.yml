@@ -1,0 +1,13 @@
+- hosts: all
+  vars:
+    apache_listen_port_ssl: 443
+    apache_create_vhosts: true
+    apache_vhosts_filename: "vhosts.conf"
+    apache_vhosts:
+      - servername: "letsencrypt-test.ticktock.host"
+        letsencrypt: yes
+    letsencrypt_domains:
+      - domain: letsencrypt-test.ticktock.host
+  roles:
+    - apache2
+    - letsencrypt

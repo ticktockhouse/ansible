@@ -1,0 +1,11 @@
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    test_multiline_var: |
+      Some text with the other var here - {{ test_var }} 
+      But, does it work ??!?!?!?!
+    test_var: blah-test-var-value
+  tasks:
+    - debug:
+        var: test_multiline_var 

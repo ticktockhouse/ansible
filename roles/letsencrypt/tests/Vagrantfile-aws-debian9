@@ -1,0 +1,36 @@
+# vim: ft=ruby
+# This gets a barebones VM up & running
+Vagrant.configure('2') do |config|
+
+	#droplet_name = `basename $PWD`.chomp
+  droplet_name = "awscli-test"
+
+  config.aws_credentials.profile = "ticktockhouse-biz"
+  config.vm.define "#{droplet_name}" do |config|
+    config.vm.provider :aws do |aws, override|
+      aws.keypair_name = "jerry"
+      aws.ami = "ami-02fc24d56bc5f3d67"
+      aws.access_key_id = ENV["VAGRANT_AWS_ACCESS_KEY"]
+      aws.secret_access_key = ENV["VAGRANT_AWS_SECRET_ACCESS_KEY"]
+      aws.region = "eu-west-1"
+      aws.security_groups = [ 'vagrant' ]
+      aws.tags = {
+        'Env' => 'dev',
+        'Name' =>  '"#{droplet_name}"'
+      }
+      aws.instance_type = "t2.micro"
+      override.ssh.username = "admin"
+      override.ssh.private_key_path = "~/.ssh/id_rsa.jerry.aws"
+      override.vm.box = "dummy"
+    end
+  end
+  config.vm.provision "shell",
+    inline: "test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)"
+	config.vm.provision "ansible" do |ansible|
+		ansible.playbook = "test.yml"
+		ansible.verbose = "vv"
+    ansible.groups = {
+      "vagrant" => ["#{droplet_name}"]
+    }
+	end
+end
