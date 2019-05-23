@@ -8,3 +8,4 @@ letsencrypt_account_email: ticktockhouse@gmail.com
 letsencrypt_dirs:
   - "{{ letsencrypt_dir }}"
   - "{{ letsencrypt_challenge_dir }}"
+  - "{{ letsencrypt_challenge_dir }}/.well-known/acme-challenge"

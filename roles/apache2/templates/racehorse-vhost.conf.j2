@@ -1,0 +1,78 @@
+{{ apache_global_vhost_settings }}
+
+{# Set up VirtualHosts #}
+{% for vhost in apache_vhosts %}
+<VirtualHost  *:80>
+  ServerName    {{ vhost.domain }}
+  ServerAlias   www.{{ vhost.domain }}
+  RedirectMatch  ^(.*)$  https://www.{{ vhost.domain }}$1
+
+</VirtualHost>
+
+<VirtualHost  *:443>
+
+  ServerName    {{ vhost.domain }}
+
+  RedirectMatch  ^(.*)$  https://www.{{ vhost.domain }}$1
+
+#    SSLEngine on
+#    SSLCertificateFile /etc/letsencrypt/live/www.{{ vhost.domain }}/fullchain.pem
+    #SSLCertificateKeyFile /etc/letsencrypt/live/www.{{ vhost.domain }}/privkey.pem
+
+</VirtualHost>
+
+
+<VirtualHost  *:443>
+
+  ServerName  www.{{ vhost.domain }}
+
+  AssignUserId  richwiln richwiln
+
+  DocumentRoot /var/www/vhosts/{{ vhost.domain }}/www
+  CustomLog    /var/www/vhosts/{{ vhost.domain }}/webstats/logs/access_log combined
+  ErrorLog     /var/www/vhosts/{{ vhost.domain }}/webstats/logs/error_log
+
+  CustomLog    ${APACHE_LOG_DIR}/combined_vhosts_access.log webalizer_combined
+
+  Alias        /webstats /var/www/vhosts/{{ vhost.domain }}/webstats
+
+ #<IfModule mod_ssl.c>
+ #  SSLEngine on
+ #  SSLCertificateFile /etc/letsencrypt/live/www.{{ vhost.domain }}/fullchain.pem
+ #  SSLCertificateKeyFile /etc/letsencrypt/live/www.{{ vhost.domain }}/privkey.pem
+
+ #</IfModule>
+  <Directory /var/www/vhosts/{{ vhost.domain }}/www>
+
+    # allow htaccess to override things
+    AllowOverride All
+
+    # block probes to unused WP functionality
+    <Files xmlrpc.php>
+      Require all denied
+    </Files>
+
+    # turn of auto-index lists in folders with no index.html file
+    Options -Indexes
+
+    # silly defaults requirements
+    php_admin_flag display_errors 0
+    php_admin_flag short_open_tag On
+
+  </Directory>
+
+  <Directory "/var/www/vhosts/{{ vhost.domain }}/webstats">
+    Options -Indexes
+    AuthType Basic
+    AuthName "Domain statistics"
+    Require  valid-user
+  </Directory>
+
+  <Directory "/var/www/vhosts/{{ vhost.domain }}/webstats/logs">
+    # deny everyone in the world access to this folder
+    Require all denied
+  </Directory>
+
+</VirtualHost>
+
+{% endfor %}

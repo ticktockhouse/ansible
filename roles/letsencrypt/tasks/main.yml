@@ -5,6 +5,7 @@
     owner: root
     group: root
     mode: 0755
+    recurse: yes
   with_items: "{{ letsencrypt_dirs }}"
 
 - name: Create Lets Encrypt Account Key

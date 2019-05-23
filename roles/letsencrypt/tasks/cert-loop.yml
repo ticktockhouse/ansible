@@ -52,7 +52,7 @@
 
 - name: Template the challenge file
   template:
-    src: challenge_file.j2
+    src: challenge-file.j2
     dest: "{{ challenge_file_name }}"
     mode: 0644
   when: challenge|changed 
@@ -61,6 +61,6 @@
   letsencrypt:
     account_email: "{{ letsencrypt_account_email }}"
     account_key: "{{ letsencrypt_account_key }}"
-    csr: "{{ req_file }}"
-    dest: "{{ cert_file }}"
+    csr: "{{ csr }}"
+    dest: "{{ cert }}"
     data: "{{ challenge }}"

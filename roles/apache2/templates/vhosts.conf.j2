@@ -1,4 +1,4 @@
-{{ apache_global_vhost_settings }}
+{# {{ apache_global_vhost_settings }} #}
 
 {# Set up VirtualHosts #}
 {% for vhost in apache_vhosts %}
@@ -26,9 +26,15 @@
 {% endif %}
   </Directory>
 {% endif %}
+{#
+{% if vhost.letsencrypt is defined %}
+{% set vhost.extra_parameters = apache_letsencrypt_challenge_parameters %}
+{% endif %}
+#}
 {% if vhost.extra_parameters is defined %}
   {{ vhost.extra_parameters }}
 {% endif %}
+  
 </VirtualHost>
 
 {% endfor %}
