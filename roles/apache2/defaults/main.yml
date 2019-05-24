@@ -63,3 +63,6 @@ apache_packages_state: present
 # TODO - check this
 
 htpasswd_file: /etc/htpasswd
+
+apache_letsencrypt_challenge_dir: /var/lib/letsencrypt/challenges
+

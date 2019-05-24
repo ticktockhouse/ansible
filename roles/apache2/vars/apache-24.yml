@@ -6,10 +6,3 @@ apache_default_vhost_filename: 000-default.conf
     #regexp: "^Listen ",
     #line: "Listen {{ apache_listen_port }}"
   #}
-apache_letsencrypt_challenge_parameters: |
-  Alias /.well-known/acme-challenge/ {{ letsencrypt_challenge_dir }}/{{ vhost.servername }}/.well-known/acme-challenge/
-  <Directory "{{ apache_vhosts_root }}/{{ vhost.servername }}">
-      AllowOverride None
-      Options MultiViews Indexes SymLinksIfOwnerMatch IncludesNoExec
-      Require method GET POST OPTIONS
-  </Directory>

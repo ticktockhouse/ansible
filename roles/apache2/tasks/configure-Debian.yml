@@ -23,6 +23,15 @@
   with_items: "{{ apache_mods_disabled }}"
   notify: restart apache
 
+- name: Add apache2 snippets for letsencrypt when defined
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ apache_conf_snippets_path }}/{{ item }}.conf"
+    owner: root
+    group: root
+    mode: 0644
+  with_items: "{{ letsencrypt_snippets }}"
+
 - name: Check whether certificates defined in vhosts exist.
   stat: "path={{ item.certificate_file }}"
   register: apache_ssl_certificates

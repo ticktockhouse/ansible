@@ -1,0 +1,6 @@
+# redirect everything to the https web site, except request to acme-challenge
+# for let's encrypt
+# To include in a virtual host on port 80
+RewriteEngine on
+RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/
+RewriteRule (.*) https://%{HTTP_HOST}$1 [R=301,L]

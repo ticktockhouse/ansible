@@ -1,0 +1,12 @@
+# declare the challenges directory for Let's Encrypt servers
+# To include in a virtual host on port 80
+
+Alias /.well-known/acme-challenge  {{ apache_letsencrypt_challenge_dir }}
+
+<Directory {{ apache_letsencrypt_challenge_dir }}>
+    Options -Indexes +FollowSymLinks
+    AllowOverride All
+    Order allow,deny
+    allow from all
+    Require all granted
+</Directory>

@@ -12,3 +12,5 @@ __apache_packages:
 apache_ports_configuration_items:
   - regexp: "^Listen "
     line: "Listen {{ apache_listen_port }}"
+
+apache_conf_snippets_path: "{{ apache_conf_path }}/conf-enabled"
