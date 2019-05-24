@@ -1,0 +1,39 @@
+#TODO It might make sense to do this based on tags, rather than do all droplets...
+
+- name: Register the hosts variable
+  shell: >
+     ~/free-code/d-ocean/ansible/digital_ocean.py -d | 
+      jq '[ .droplets[] | { name: .name, ip: .networks.v4[].ip_address }]'
+  become: no
+  register: do_hosts
+
+- name: Get all content from zonomi API response and register the variable
+  uri:
+    url: "{{ zonomi_api_url }}?action=QUERY&name=**.{{ zonomi_domain }}&api_key={{ zonomi_api_key }}"
+    return_content: yes
+  register: zonomi_raw_api_result
+
+- set_fact:
+    zonomi_api_result: "{{ zonomi_raw_api_result.content | from_xml | to_nice_json }}"
+
+- template:
+    src: zonomi-api-result.j2
+    dest: /tmp/zonomi-api-result.json
+
+- name: Grab "-do" records from API result file
+  shell: >
+    jq '[.dnsapi_result.actions[].record[] | 
+    select(."@name"|test("{{ zonomi_domain_regex }}")) | 
+    {name: ."@name", ip: ."@content"}]' /tmp/zonomi-api-result.json
+## TODO: /tmp location should be a var! ^^^^^
+  register: zonomi_do_records
+
+- name: Delete old "-do" records
+  uri:
+    url: "{{ zonomi_api_url }}?action=DELETE&name={{ item.name }}&type=A&api_key={{ zonomi_api_key }}"
+  with_items: "{{ zonomi_do_records.stdout }}"
+
+- name: Add "A" records for Digitalocean
+  uri:
+    url: "{{ zonomi_api_url }}?action=SET&name={{ item.name }}-do.{{ zonomi_domain }}&type=A&value={{ item.ip }}&api_key={{ zonomi_api_key }}"
+  with_items: "{{ do_hosts.stdout }}"

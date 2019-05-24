@@ -1,0 +1,10 @@
+
+# This now works \0/
+
+- hosts: localhost
+  connection: local
+  vars:
+    zonomi_api_key: "{{ lookup('pipe', 'pass show tokens/zonomi') }}"
+    zonomi_api_url: "https://zonomi.com/app/dns/dyndns.jsp"
+  vars_files:
+    - zonomi_vars
