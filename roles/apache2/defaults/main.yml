@@ -60,9 +60,11 @@ apache_restart_state: restarted
 # if you want to upgrade or switch versions using a new repo.
 apache_packages_state: present
 
-# TODO - check this
-
+# TODO - check thish
 htpasswd_file: /etc/htpasswd
 
 apache_letsencrypt_challenge_dir: /var/lib/letsencrypt/challenges
 
+apache_letsencrypt_snippets:
+  - letsencrypt-challenge-snippet
+  - letsencrypt-redirect-snippet

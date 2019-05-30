@@ -25,12 +25,12 @@
 
 - name: Add apache2 snippets for letsencrypt when defined
   template:
-    src: "{{ item }}.j2"
+    src: "{{ item }}.conf.j2"
     dest: "{{ apache_conf_snippets_path }}/{{ item }}.conf"
     owner: root
     group: root
     mode: 0644
-  with_items: "{{ letsencrypt_snippets }}"
+  with_items: "{{ apache_letsencrypt_snippets }}"
 
 - name: Check whether certificates defined in vhosts exist.
   stat: "path={{ item.certificate_file }}"

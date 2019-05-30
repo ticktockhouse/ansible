@@ -4,10 +4,10 @@
     apache_create_vhosts: true
     apache_vhosts_filename: "vhosts.conf"
     apache_vhosts:
-      - servername: "letsencrypt-test.ticktock.host"
+      - servername: "letsencrypt-test-do.ticktock.host"
         letsencrypt: yes
     letsencrypt_domains:
-      - domain: letsencrypt-test.ticktock.host
+      - domain: letsencrypt-test-do.ticktock.host
   roles:
     - apache2
     - letsencrypt

@@ -4,7 +4,6 @@
   with_items:
      - "{{ ansible_os_family }}.yml"
 
-
 - name: Debug login_users
   debug:
     var: login_users
