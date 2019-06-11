@@ -13,7 +13,7 @@
   args:
     creates: ./restic_{{ restic_version }}_linux_amd64
 
-- name: Copy the file to "/usr/local/bin"
+- name: Copy the file to bindir
   copy:
     src:  "./restic_{{ restic_version }}_linux_amd64"
     dest: "{{ restic_bindir }}/restic"
@@ -27,10 +27,12 @@
     restic_password: "{{ lookup('password', 'dev/null length=32') }}"
 
 - name: Create the repo if it doesn't exist
-  shell: "restic -r {{ restic_repo }} init --password-command='echo {{ restic_password }}'"
+  shell: "{{ restic_bindir }}/restic -r {{ restic_repo }} init --password-command='echo {{ restic_password }}'"
   register: repo_init
   environment: "{{ restic_env }}"
   ignore_errors: yes
+  when: restic_initrepo | bool
+  
   
 
 #- name: Write an "initial backup" file

@@ -1,6 +1,7 @@
 - hosts: all
   vars:
     restic_slug: do-testing
+    restic_initrepo: no
   environment:
     B2_ACCOUNT_ID: "{{  lookup('pipe', 'pass show backblaze/account-id') }}"
     B2_ACCOUNT_KEY: "{{  lookup('pipe', 'pass show backblaze/application-key') }}"
