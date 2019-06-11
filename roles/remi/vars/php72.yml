@@ -1,7 +1,0 @@
-remi_php_packages:
-  - php72-php-common
-  - php72-php-fpm
-remi_php_baseurl: "http://rpms.remirepo.net/enterprise/7/php72/$basearch/"
-php_fpm_socket: /var/run/php72-fpm.default.sock
-php_fpm_service: php72-php-fpm
-php_fpm_www_conf_location: /etc/opt/remi/php72/php-fpm.d/www.conf

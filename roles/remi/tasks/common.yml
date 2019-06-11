@@ -1,4 +1,0 @@
-- name: Install Remi's PHP7 + EPEL repo packages
-  yum:
-    name: "{{ remi_default_packages }}"
-    state: present
