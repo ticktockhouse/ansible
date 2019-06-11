@@ -1,0 +1,14 @@
+- include_tasks: web-pre.yml
+  when: "'web' in group_names"
+
+- include_tasks: web-vhosts-loop.yml
+  with_items: "{{ wordpress_vhosts }}"
+  when: "'web' in group_names"
+
+- include_tasks: web-post.yml
+  when: "'web' in group_names"
+
+- include_tasks: db.yml
+  with_items: "{{ wordpress_vhosts }}"
+  when: "'db' in group_names"
+  tags: wpdb
