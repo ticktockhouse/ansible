@@ -1,11 +1,3 @@
-### FIXME #####
-- name: Install PHP mysql
-  package:
-    name: php72-php-pecl-mysql
-    state: present
-  notify: restart php-fpm
-###############
-
 - name: Ensure root vhosts directory exists
   file:
     state: directory
