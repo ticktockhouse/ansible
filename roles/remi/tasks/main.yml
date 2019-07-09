@@ -1,9 +1,9 @@
 - name: Enable PHP repo (version needs to be defined as a var)
   yum_repository:
-    name: remi-{{ remi_php_version }}
+    name: "remi-{{ remi_php_version }}"
     enabled: yes
     baseurl: "{{ remi_php_baseurl }}"
-    description: remi-{{ remi_php_version }}
+    description: "remi-{{ remi_php_version }}"
     gpgkey: /etc/pki/rpm-gpg/RPM-GPG-KEY-remi
 
 - name: Install Remi's PHP7 + EPEL repo packages
