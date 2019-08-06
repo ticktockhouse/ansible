@@ -1,0 +1,26 @@
+- name: Grab current public IP
+  shell: curl ifconfig.me
+  register: public_ip_response
+
+- debug:
+    msg: "Public IP appears to be: {{ public_ip_response.stdout }}"
+
+- debug:
+    msg: "{{ aws_access_sg_name }}"
+
+- name: Define jerry-access SG
+  ec2_group:
+    name: "{{ aws_access_sg_name }}"
+    vpc_id: "{{ aws_access_vpc_id }}"
+    rules:
+      "{{ aws_access_ruleset }}"
+    description: jerry_access_via_ansible
+
+#- name: Attach SG to selected instance(s)
+  #ec2_instance: 
+    #instance_ids:
+      #"{{ aws_access_instance_ids }}"
+    #security_groups:
+      #- sg-06a3076a3ef378a76
+      ##- "{{ aws_access_sg_name }}"
+  

@@ -1,0 +1,7 @@
+aws_access_ruleset:
+  - proto: tcp
+    from_port: 22
+    to_port: 22
+    cidr_ip: "{{ public_ip_response.stdout }}/32"
+    rule_desc: SSH access
+aws_access_sg_name: aws-sg-access-via-ansible
