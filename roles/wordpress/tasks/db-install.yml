@@ -12,6 +12,7 @@
 - name: Test if we already have a DB password defined for this vhost
   shell: credstash get {{ item.slug }}_db_user
   delegate_to: localhost
+  become: no
   register: credstash_db_exists
   ignore_errors: yes
   tags: passwords
@@ -31,6 +32,7 @@
 - name: Add the password to credstash
   shell: credstash put {{ item.slug }}_db_user {{ db_password }}
   delegate_to: localhost
+  become: no
   when: credstash_db_exists.rc == 1
   tags: passwords
 ####

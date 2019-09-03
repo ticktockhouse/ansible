@@ -1,0 +1,143 @@
+- name: Create user
+  user:
+    name: "{{ item.slug }}"
+    state: present
+
+- name: Create WP vhosts subdirectory
+  file:
+    path: "{{ wordpress_path }}"
+    state: directory
+    owner: "{{ item.slug }}"
+    group: "{{ apache_group }}"
+    mode: 0775
+- name: Create user
+  user:
+    name: "{{ item.slug }}"
+    state: present
+
+- name: Create WP vhosts subdirectory
+  file:
+    path: "{{ wordpress_path }}"
+    state: directory
+    owner: "{{ item.slug }}"
+    group: "{{ apache_group }}"
+    mode: 0775
+
+- name: Only install WordPress when there is no index.php in the path
+  stat:
+    path: "{{ wordpress_path }}/index.php"
+  register: stat_result
+
+- name: Copy extracted directory to "{{wordpress_path}}"
+  shell: cp -r -n {{ wp_extract_dest_dir }}/wordpress/* {{wordpress_path}}
+  when: stat_result.stat.exists == False
+### WP admin password credstash stuff
+#- name: Set WP Admin user
+  #set_fact:
+    #db_user: "{{ item.slug }}_wp_admin"
+  #tags: passwords
+
+- name: Test if we already have an htpasswd password defined for this vhost
+  #shell: credstash get {{ item.slug }}_wp_admin credtype=wp
+  shell: credstash get {{ item.slug }}_wp_admin
+  delegate_to: localhost
+  register: credstash_wp_admin_exists
+  ignore_errors: yes
+  tags: passwords
+  become: no
+
+- name: Get WP admin password from credstash
+  set_fact:
+    wp_admin_password: "{{ lookup('credstash', '{{ item.slug }}_wp_admin') }}"
+  when: credstash_wp_admin_exists.rc == 0
+  tags: passwords
+
+- name: Set WP admin password
+  set_fact:
+    wp_admin_password: "{{ lookup('password', '/dev/null length=32') }}"
+  when: credstash_wp_admin_exists.rc == 1
+  tags: passwords
+
+- name: Add the password to credstash
+  shell: credstash put {{ item.slug }}_wp_admin {{ wp_admin_password }}
+  delegate_to: localhost
+  when: credstash_wp_admin_exists.rc == 1
+  tags: passwords
+  become: no
+####
+
+- name: Test if we already have a DB password defined for this vhost
+  #shell: credstash get {{ item.slug }}_wp_admin credtype=wp
+  shell: credstash get {{ item.slug }}_db_user
+  delegate_to: localhost
+  register: credstash_db_user_exists
+  ignore_errors: yes
+  tags: passwords
+  become: no
+
+- name: Get DB password from credstash
+  set_fact:
+    wp_admin_password: "{{ lookup('credstash', '{{ item.slug }}_db_user') }}"
+  when: credstash_db_user_exists.rc == 0
+  tags: passwords
+
+- name: Set DB user password
+  set_fact:
+    db_user_password: "{{ lookup('password', '/dev/null length=32') }}"
+  when: credstash_db_user_exists.rc == 1
+  tags: passwords
+
+- name: Add the password to credstash
+  shell: credstash put {{ item.slug }}_db_user {{ wp_admin_password }}
+  delegate_to: localhost
+  when: credstash_db_user_exists.rc == 1
+  tags: passwords
+  become: no
+
+- set_fact:
+    db_password: "{{ lookup('credstash', '{{ item.slug }}_db_user') }}"
+
+# htpasswd stuff
+
+- name: Ensure python passlib is installed
+  package:
+    name: python-passlib
+    state: present
+
+- name: Render the htpasswd file (loop)
+  htpasswd:
+    path: "{{ htpasswd_file }}"
+    name: "{{ item.slug }}_wp_admin"
+    password: "{{ lookup('credstash', '{{ item.slug }}_wp_admin') }}"
+    owner: "{{ htpasswd_user }}"
+    group: "{{ htpasswd_group }}"
+    mode: 0640
+
+- name: Template WordPress config file
+  template:
+    src: wp-config.php.j2
+    dest: "{{wordpress_path}}/wp-config.php"
+    owner: "{{ item.slug }}"
+    group: "{{ apache_group }}"
+    mode: 0775
+    backup: yes
+
+- name: Change ownership of installation directory
+  file:
+    path: "{{wordpress_path}}"
+    owner: "{{ item.slug }}"
+    group: "{{ apache_group }}"
+    state: directory
+    recurse: yes
+    setype: httpd_sys_content_t
+  when: stat_result.stat.exists == False
+ 
+- name: Change ownership of wp-content directory
+  file:
+    path: "{{wordpress_path}}/wp-content/"
+    owner: "{{ item.slug }}"
+    group: "{{ apache_group }}"
+    mode: 755
+    state: directory
+    recurse: yes
+  when: stat_result.stat.exists == False
