@@ -1,7 +1,7 @@
 {{ apache_global_vhost_settings }}
 
 {# Set up VirtualHosts #}
-{% for vhost in wordpress_vhosts %}
+{% for vhost in new_vhosts %}
 {% if vhost.tls is defined %}
 <VirtualHost {{ apache_listen_ip }}:{{ apache_listen_port }}>
   ServerName {{ vhost.domain }}
@@ -48,27 +48,6 @@
 {% else %}
     Require all granted
 {% endif %}
-    RewriteEngine On
-{% if vhost.multisite is defined %}
-    RewriteBase /
-    RewriteRule ^index\.php$ - [L]
-# add a trailing slash to /wp-admin
-    RewriteRule ^([_0-9a-zA-Z-]+/)?wp-admin$ $1wp-admin/ [R=301,L]
-    RewriteCond %{REQUEST_FILENAME} -f [OR]
-    RewriteCond %{REQUEST_FILENAME} -d
-    RewriteRule ^ - [L]
-    RewriteRule ^([_0-9a-zA-Z-]+/)?(wp-(content|admin|includes).*) $2 [L]
-    RewriteRule ^([_0-9a-zA-Z-]+/)?(.*\.php)$ $2 [L]
-    RewriteRule . /index.php [L]
-{% else %}
-    RewriteBase /
-    RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
-    RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
-    RewriteRule ^index\.php$ - [L]
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule . /index.php [L]
-{% endif %}
   </Directory>
 {% if vhost.subdirs is defined %}
 {% for subdir in vhost.subdirs %}
@@ -83,30 +62,11 @@ Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
 {% else %}
     Require all granted
 {% endif %}
-    RewriteEngine On
-    RewriteBase /{{ subdir.dir }}/
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule . /{{ subdir.dir }}/index.php [L]
 </Directory>
 {% endfor %}
 {% endif %}
 	ErrorLog /var/log/httpd/{{ vhost.domain }}-error.log
 	LogLevel warn
   CustomLog /var/log/httpd/{{ vhost.domain }}-access.log combined
-#  <Files wp-login.php>
-#    AuthName "Admins Only"
-#    AuthUserFile {{ htpasswd_file }}
-#    AuthGroupFile /dev/null
-#    AuthType basic
-#    require valid-user
-#  </Files>
-#   <Location /wp-admin/>
-#    AuthName "Admins Only"
-#    AuthUserFile {{ htpasswd_file }}
-#    AuthGroupFile /dev/null
-#    AuthType basic
-#    require valid-user
-#  </Location>
 </VirtualHost>
 {% endfor %}

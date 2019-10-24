@@ -15,6 +15,7 @@
     state: link
   with_items: "{{ apache_mods_enabled }}"
   notify: restart apache
+  ignore_errors: yes
 
 - name: Disable Apache mods.
   file:

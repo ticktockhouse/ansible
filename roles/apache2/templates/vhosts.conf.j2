@@ -52,10 +52,16 @@
 {% if apache_vhosts_version == "2.4" %}
   SSLCompression off
 {% endif %}
+{% if vhost.letsencrypt is defined %}
+  SSLCertificateFile /etc/letsencrypt/live/{{ vhost.domain }}/cert.pem
+  SSLCertificateKeyFile /etc/letsencrypt/live/{{ vhost.domain }}/privkey.pem
+  SSLCertificateChainFile /etc/letsencrypt/live/{{ vhost.domain }}/chain.pem
+{% else %}
   SSLCertificateFile {{ vhost.certificate_file }}
   SSLCertificateKeyFile {{ vhost.certificate_key_file }}
 {% if vhost.certificate_chain_file is defined %}
   SSLCertificateChainFile {{ vhost.certificate_chain_file }}
+{% endif %}
 {% endif %}
 
 {% if vhost.serveradmin is defined %}

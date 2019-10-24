@@ -63,3 +63,10 @@ apache_packages_state: present
 # TODO - check this
 
 htpasswd_file: /etc/htpasswd
+
+# No juicy server info by default
+apache_ports_configuration_items:
+  - regexp: "^ServerTokens"
+    line: "ServerTokens Prod"
+  - regexp: "^ServerSignature"
+    line: "ServerSignature Off"
