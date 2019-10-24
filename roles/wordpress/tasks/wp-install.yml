@@ -3,6 +3,15 @@
     name: "{{ item.slug }}"
     state: present
 
+- set_fact:
+    apache_group: www-data
+    apache_owner: www-data
+  when: ansible_os_family == 'Debian'
+
+- set_fact:
+    htpasswd_group: "{{ apache_group }}"
+    htpasswd_user: "{{ apache_owner }}"
+
 - name: Create WP vhosts subdirectory
   file:
     path: "{{ wordpress_path }}"

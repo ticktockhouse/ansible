@@ -14,5 +14,6 @@
 
 - include_tasks: web-subdirs-loop.yml
   with_items: "{{ subdirs_list }}"
+  when: subdirs_list is defined
 
 - pause:
