@@ -9,6 +9,7 @@
     gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
     gpgcheck: true
   tags: mariadb
+  when: ansible_os_family == 'RedHat'
 
 - name: Install packages
   package:
