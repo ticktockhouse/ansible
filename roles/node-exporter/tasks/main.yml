@@ -1,0 +1,40 @@
+- name: DL the node exporter archive
+  get_url:
+    url: "{{ node_exporter_dl_url }}"
+    dest: "{{ node_exporter_dl_dest }}"
+
+- name: unarchive
+  unarchive:
+    remote_src: yes
+    src: "{{ node_exporter_dl_dest }}"
+    dest: /tmp
+    
+- name: copy to /u/l/bin
+  copy:
+    remote_src: yes
+    src: "/tmp/{{ node_exporter_filename }}/node_exporter"
+    dest: "{{ node_exporter_final_dest }}"
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Add user
+  user:
+    name: node_exporter
+    shell: /bin/false
+    system: yes
+
+- name: Template service systemd unit
+  template:
+    src: node_exporter.systemd.j2
+    dest: /etc/systemd/system/node_exporter.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Reload systemd
+  systemd:
+    name: node_exporter
+    daemon_reload: yes
+    enabled: yes
+    state: started
