@@ -6,3 +6,4 @@
 
 - include_tasks: db-install-subdirs.yml
   with_items: "{{ subdirs_list }}"
+  when: item.subdirs is defined and item.subdirs
