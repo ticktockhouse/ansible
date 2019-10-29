@@ -91,9 +91,9 @@ Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
 </Directory>
 {% endfor %}
 {% endif %}
-	ErrorLog /var/log/httpd/{{ vhost.domain }}-error.log
+	ErrorLog /var/log/{{ apache_daemon }}/{{ vhost.domain }}-error.log
 	LogLevel warn
-  CustomLog /var/log/httpd/{{ vhost.domain }}-access.log combined
+  CustomLog /var/log/{{ apache_daemon }}/{{ vhost.domain }}-access.log combined
 #  <Files wp-login.php>
 #    AuthName "Admins Only"
 #    AuthUserFile {{ htpasswd_file }}
@@ -109,4 +109,5 @@ Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
 #    require valid-user
 #  </Location>
 </VirtualHost>
+{% endif %}
 {% endfor %}

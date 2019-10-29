@@ -39,13 +39,37 @@
   notify: restart apache
   when: apache_create_vhosts
 
+- name: Add apache vhosts configuration [Wordpress]
+  template:
+    src: "{{ apache_wordpress_vhosts_template }}"
+    dest: "{{ apache_conf_path }}/sites-available/{{ apache_wordpress_vhosts_filename }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart apache
+  when: apache_create_vhosts
+
+- name: Add apache vhosts configuration [New]
+  template:
+    src: "{{ apache_new_vhosts_template }}"
+    dest: "{{ apache_conf_path }}/sites-available/{{ apache_new_vhosts_filename }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart apache
+  when: apache_create_vhosts
+
 - name: Add vhost symlink in sites-enabled.
   file:
-    src: "{{ apache_conf_path }}/sites-available/{{ apache_vhosts_filename }}"
-    dest: "{{ apache_conf_path }}/sites-enabled/{{ apache_vhosts_filename }}"
+    src: "{{ apache_conf_path }}/sites-available/{{ item }}"
+    dest: "{{ apache_conf_path }}/sites-enabled/{{ item }}"
     state: link
   notify: restart apache
   when: apache_create_vhosts
+  with_items:
+    - "{{ apache_wordpress_vhosts_filename }}"
+    - "{{ apache_new_vhosts_filename }}"
+    - "{{ apache_vhosts_filename }}"
 
 - name: Remove default vhost in sites-enabled.
   file:

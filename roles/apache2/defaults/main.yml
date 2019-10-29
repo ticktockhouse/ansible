@@ -1,4 +1,6 @@
 ---
+wordpress_vhosts: ""
+new_vhosts: ""
 apache_enablerepo: ""
 
 apache_listen_ip: "*"
@@ -11,6 +13,8 @@ apache_vhosts_filename: "vhosts.conf"
 apache_vhosts_template: "vhosts.conf.j2"
 apache_wordpress_vhosts_filename: "wordpress-vhosts.conf"
 apache_wordpress_vhosts_template: "wordpress-vhosts.conf.j2"
+apache_new_vhosts_filename: "new-vhosts.conf"
+apache_new_vhosts_template: "new-vhosts.conf.j2"
 
 # On Debian/Ubuntu, a default virtualhost is included in Apache's configuration.
 # Set this to `true` to remove that default.
