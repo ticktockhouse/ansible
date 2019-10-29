@@ -33,6 +33,15 @@
   with_items: "{{ login_users }}"
   register: ssh_key_data
 
+- name: Ensure pubkey auth is enabled
+  lineinfile:
+    dest: /etc/ssh/sshd_config 
+    regexp: "^PubkeyAuthentication"
+    line: "PubkeyAuthentication yes"
+    state: present
+  notify:
+    - restart sshd
+
 - debug:
     var: ssh_key_data
 
