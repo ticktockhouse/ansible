@@ -1,6 +1,5 @@
 # roles/mariadb/tasks/config.yml
 ---
-
 - name: Install server config file
   template:
     src: etc_my.cnf.d_server.cnf.j2
