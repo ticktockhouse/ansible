@@ -2,112 +2,12 @@
 
 {# Set up VirtualHosts #}
 {% for vhost in wordpress_vhosts %}
-{% if vhost.tls is defined %}
+{% if vhost.tls is not defined %}
 <VirtualHost {{ apache_listen_ip }}:{{ apache_listen_port }}>
   ServerName {{ vhost.domain }}
   ServerAlias www.{{ vhost.domain }}
   Documentroot "{{ apache_vhosts_root }}/{{ vhost.domain }}/httpdocs"
   Redirect / https://{{ vhost.domain }}/
-</VirtualHost>
-{% endif %}
-
-{% if vhost.tls is defined %}
-<VirtualHost {{ apache_listen_ip }}:{{ apache_listen_port_ssl }}>
-{% else %}
-<VirtualHost {{ apache_listen_ip }}:{{ apache_listen_port }}>
-{% endif %}
-  ServerName {{ vhost.domain }}
-  ServerAlias www.{{ vhost.domain }}
-  ServerAdmin admin@{{ vhost.domain }}
-  DocumentRoot "{{ apache_vhosts_root }}/{{ vhost.domain }}/httpdocs"
-{% if vhost.tls is defined %}
-  SSLEngine on
-  SSLCipherSuite {{ apache_ssl_cipher_suite }}
-  SSLProtocol {{ apache_ssl_protocol }}
-  SSLHonorCipherOrder On
-{% if apache_vhosts_version == "2.4" %}
-  SSLCompression off
-{% endif %}
-{% if vhost.letsencrypt is defined %}
-  SSLCertificateFile /etc/letsencrypt/live/{{ vhost.domain }}/cert.pem
-  SSLCertificateKeyFile /etc/letsencrypt/live/{{ vhost.domain }}/privkey.pem
-  SSLCertificateChainFile /etc/letsencrypt/live/{{ vhost.domain }}/chain.pem
-{% else %}
-  SSLCertificateFile {{ vhost.certificate_file }}
-  SSLCertificateKeyFile {{ vhost.certificate_key_file }}
-{% if vhost.certificate_chain_file is defined %}
-  SSLCertificateChainFile {{ vhost.certificate_chain_file }}
-{% endif %}
-{% endif %}
-  <Directory "{{ apache_vhosts_root }}/{{ vhost.domain }}/httpdocs">
-    AllowOverride none
-    Options {{ vhost.options | default(apache_options) }}
-{% if apache_vhosts_version == "2.2" %}
-    Order allow,deny
-    Allow from all
-{% else %}
-    Require all granted
-{% endif %}
-    RewriteEngine On
-{% if vhost.multisite is defined %}
-    RewriteBase /
-    RewriteRule ^index\.php$ - [L]
-# add a trailing slash to /wp-admin
-    RewriteRule ^([_0-9a-zA-Z-]+/)?wp-admin$ $1wp-admin/ [R=301,L]
-    RewriteCond %{REQUEST_FILENAME} -f [OR]
-    RewriteCond %{REQUEST_FILENAME} -d
-    RewriteRule ^ - [L]
-    RewriteRule ^([_0-9a-zA-Z-]+/)?(wp-(content|admin|includes).*) $2 [L]
-    RewriteRule ^([_0-9a-zA-Z-]+/)?(.*\.php)$ $2 [L]
-    RewriteRule . /index.php [L]
-{% else %}
-    RewriteBase /
-    RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
-    RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
-    RewriteRule ^index\.php$ - [L]
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule . /index.php [L]
-{% endif %}
-  </Directory>
-{% if vhost.subdirs is defined %}
-{% for subdir in vhost.subdirs %}
-Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
-
-<Directory {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs>
-    AllowOverride none
-    Options {{ vhost.options | default(apache_options) }}
-{% if apache_vhosts_version == "2.2" %}
-    Order allow,deny
-    Allow from all
-{% else %}
-    Require all granted
-{% endif %}
-    RewriteEngine On
-    RewriteBase /{{ subdir.dir }}/
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule . /{{ subdir.dir }}/index.php [L]
-</Directory>
-{% endfor %}
-{% endif %}
-	ErrorLog /var/log/{{ apache_daemon }}/{{ vhost.domain }}-error.log
-	LogLevel warn
-  CustomLog /var/log/{{ apache_daemon }}/{{ vhost.domain }}-access.log combined
-#  <Files wp-login.php>
-#    AuthName "Admins Only"
-#    AuthUserFile {{ htpasswd_file }}
-#    AuthGroupFile /dev/null
-#    AuthType basic
-#    require valid-user
-#  </Files>
-#   <Location /wp-admin/>
-#    AuthName "Admins Only"
-#    AuthUserFile {{ htpasswd_file }}
-#    AuthGroupFile /dev/null
-#    AuthType basic
-#    require valid-user
-#  </Location>
 </VirtualHost>
 {% endif %}
 {% endfor %}
