@@ -50,26 +50,9 @@
     Require all granted
 {% endif %}
   </Directory>
-{% if vhost.subdirs is defined %}
-{% for subdir in vhost.subdirs %}
-Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
-
-<Directory {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs>
-    AllowOverride none
-    Options {{ vhost.options | default(apache_options) }}
-{% if apache_vhosts_version == "2.2" %}
-    Order allow,deny
-    Allow from all
-{% else %}
-    Require all granted
-{% endif %}
-</Directory>
-{% endfor %}
-{% endif %}
 	ErrorLog /var/log/{{ apache_daemon }}/{{ vhost.domain }}-error.log
 	LogLevel warn
   CustomLog /var/log/{{ apache_daemon }}/{{ vhost.domain }}-access.log combined
 </VirtualHost>
-{% endif %}
 {% endfor %}
 
