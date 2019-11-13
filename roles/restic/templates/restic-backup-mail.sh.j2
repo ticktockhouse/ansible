@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -e
+
+EMAIL_TO="{{ restic_mail_recipients | join(' ') }}"
+
+(
+echo "Backup job started at $(date)" ;
+source ~/.restic.cf;
+export TMPDIR=/var/restic/tmp;
+
+
+mkdir -p $TMPDIR;
+mkdir -p /var/restic/cache;
+touch /root/restic-excludes.txt;
+
+
+{% for dir in restic_backup_dirs %}
+{{ restic_bindir }}/restic backup --verbose {{ dir }} --exclude-file={{ restic_excludes_file }} --cache-dir {{ restic_cache_dir }}
+{% endfor %}
+echo "Backup job finished at $(date)" ) \
+  | mail -s "Backup job finished at $(date)" $EMAIL_TO
+

@@ -2,6 +2,12 @@
   vars:
     restic_slug: do-testing
     restic_initrepo: no
+    restic_mail_wrapper: yes
+    restic_mail_recipients:
+      - mail@example.com
+    restic_backup_dirs:
+      - /root
+      - /tmp
   environment:
     B2_ACCOUNT_ID: "{{  lookup('pipe', 'pass show backblaze/account-id') }}"
     B2_ACCOUNT_KEY: "{{  lookup('pipe', 'pass show backblaze/application-key') }}"
