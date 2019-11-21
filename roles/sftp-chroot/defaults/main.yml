@@ -1,0 +1,3 @@
+---
+sftp_chroot_directory: /sftp
+sftp_chroot_group: sftpusers

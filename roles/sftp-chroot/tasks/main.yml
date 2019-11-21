@@ -1,0 +1,90 @@
+# Role-ifying SFTP chroot. This one requires rsyslog - probably room for improvement there...
+
+- name: Add sftpusers group
+  group:
+    name: "{{ sftp_chroot_group }}"
+    state: present
+
+#### Possibly turn this next bit into a role, or modify sftp-server role
+- name: Assemble sshd config to include chrooty stuff
+  assemble:
+    src: sshd
+    dest: /etc/ssh/sshd_config
+    delimiter: '###VIA ANSIBLE###'
+    remote_src: False
+    backup: yes
+  notify:
+    - restart sshd
+
+- name: Add SFTP users
+  user:
+    name: "{{ item }}"
+    group: "{{ sftp_chroot_group }}"
+    shell: /sbin/nologin
+    home: /incoming
+  with_items: "{{ sftp_chroot_users }}"
+
+- name: Make sure SFTP-chroot root directory is created (!)
+  file:
+    path: "{{ sftp_chroot_directory }}"
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Create ssh-pool directory to store SFTP users' authorised keys
+  file:
+    path: /etc/ssh-pool/
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+# There's probably a better way to do this than stating all the directory names again...
+
+- name: Create SFTP user directories
+  file:
+    path: "{{ sftp_chroot_directory }}/{{ item }}"
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  with_items: "{{ sftp_chroot_users }}"
+
+- name: Create the user's incoming directories
+  file:
+    path: "{{ sftp_chroot_directory }}/{{ item }}/incoming"
+    state: directory
+    mode: 0755
+    owner: "{{ item }}"
+    group: "{{ sftp_chroot_group }}"
+  with_items: "{{ sftp_chroot_users }}"
+
+# Add SFTP chroot logging
+
+- name: Add rsyslog configuration
+  template:
+    src: rsyslog.sftp.conf.j2
+    dest: /etc/rsyslog.d/sftp.conf
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Restart rsyslog to create socket file
+  service:
+    name: rsyslog
+    state: restarted
+
+
+- name: Add dev directories for users' logs
+  file:
+    state: directory
+    path: "{{ sftp_chroot_directory }}/{{ item }}/dev/"
+    mode: 0755
+    owner: root
+    group: root
+  with_items: "{{ sftp_chroot_users }}"
+
+- name: Add "log" hard link
+  command: ln -f {{ sftp_chroot_directory }}/sftp.log.socket {{ sftp_chroot_directory }}/"{{ item }}"/dev/log
+  with_items: "{{ sftp_chroot_users  }}"

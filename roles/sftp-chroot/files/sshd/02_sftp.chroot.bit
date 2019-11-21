@@ -1,0 +1,10 @@
+ Subsystem sftp internal-sftp -f AUTH -1 VERBOSE
+# Begin SFTP-Server block
+Match Group sftpusers
+    ChrootDirectory /sftp/%u 
+    AllowTCPForwarding no
+    X11Forwarding no
+    ForceCommand internal-sftp
+    AuthorizedKeysFile /etc/ssh-pool/%u.pub
+# End SFTP-Server block
+
