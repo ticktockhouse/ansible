@@ -73,38 +73,6 @@
   when: credstash_wp_admin_exists.rc == 1
   tags: passwords
   become: no
-####
-
-- name: Test if we already have a DB password defined for this vhost
-  #shell: credstash get {{ item.slug }}_wp_admin credtype=wp
-  shell: credstash get {{ item.slug }}_db_user
-  delegate_to: localhost
-  register: credstash_db_user_exists
-  ignore_errors: yes
-  tags: passwords
-  become: no
-
-- name: Get DB password from credstash
-  set_fact:
-    wp_admin_password: "{{ lookup('credstash', '{{ item.slug }}_db_user') }}"
-  when: credstash_db_user_exists.rc == 0
-  tags: passwords
-
-- name: Set DB user password
-  set_fact:
-    db_user_password: "{{ lookup('password', '/dev/null length=32') }}"
-  when: credstash_db_user_exists.rc == 1
-  tags: passwords
-
-- name: Add the password to credstash
-  shell: credstash put {{ item.slug }}_db_user {{ wp_admin_password }}
-  delegate_to: localhost
-  when: credstash_db_user_exists.rc == 1
-  tags: passwords
-  become: no
-
-- set_fact:
-    db_password: "{{ lookup('credstash', '{{ item.slug }}_db_user') }}"
 
 # htpasswd stuff
 

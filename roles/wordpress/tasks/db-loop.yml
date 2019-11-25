@@ -1,4 +1,8 @@
-- include_tasks: db-install.yml
+- include_tasks: db-install-generic.yml
+  when: item.db_name is not defined
+
+- include_tasks: db-install-named.yml
+  when: item.db_name is defined
 
 - set_fact:
     subdirs_list: "{{ item.subdirs }}"
