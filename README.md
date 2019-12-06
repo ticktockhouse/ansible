@@ -1,5 +1,10 @@
 # ansible
 Ansible roles for fun and profit
+
+Have a look at the `dev` branch for all roles I'm sharing - though use at your own risk :) Roles in `master` I have more faith in, but obviously I take no responsibility for a b0rked system..
+
+Tests are welcome contributions. I'd like to work in a test-drvien way, I just hardly ever have the time..
+
 ## mailwrapper
 This one automates the process described [here](http://kb.odin.com/en/114845), and is designed to output a log of all mail sent via PHP scripts with an additional "X-Additional-Header" which can then be searched if someone complains that your server is doing something naughty
 
