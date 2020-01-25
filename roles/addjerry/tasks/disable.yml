@@ -1,3 +1,12 @@
+- name: Nuke lines for idempotency
+  lineinfile:
+    dest: /etc/ssh/sshd_config 
+    regexp: "{{ item }}"
+    state: absent
+  loop:
+    - "^PermitRootLogin"
+    - "^PasswordAuthentication"
+
 - name: disable root SSH access
   lineinfile:
     dest: /etc/ssh/sshd_config 

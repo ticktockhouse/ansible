@@ -13,6 +13,7 @@
   user:
     name: "{{ item.name }}"
     shell: "{{ item.shell | default('/bin/bash') }}"
+    group: "{{ item.group | default(omit) }}"
     groups: "{{ item.groups | default(omit) }}"
     password: "{{ item.password | default(omit) }}"
     create_home: "{{ item.create_home | default('no') }}"
