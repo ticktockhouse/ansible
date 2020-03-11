@@ -1,0 +1,3 @@
+{% for host in pi_hole_hosts %}
+{{ host.ip }}  {{ host.name }}.{{ domain }} {{ host.name }}
+{% endfor %}

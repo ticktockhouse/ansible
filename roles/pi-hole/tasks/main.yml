@@ -1,0 +1,11 @@
+- name: An additional dnsmasq config file
+  template:
+    src: lan-conf.j2
+    dest: /etc/dnsmasq.d/99-lan.conf
+  notify: restart pihole-FTL
+
+- name: Template lan.list file for local LAN hosts
+  template:
+    src: lan.list.j2
+    dest: "{{ pi_hole_lan_list }}"
+  notify: restart pihole-FTL
