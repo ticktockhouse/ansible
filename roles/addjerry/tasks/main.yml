@@ -9,6 +9,14 @@
   debug:
     var: login_users
 
+- name: Create supplementary groups, if defined
+  group:
+    name: "{{ item.groups }}"
+    state: present
+  with_items: "{{ login_users }}"
+  when: item.groups is defined and item.groups
+  
+
 - name: Add user(s)!
   user:
     name: "{{ item.name }}"
