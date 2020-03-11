@@ -1,0 +1,4 @@
+restic_env:
+  B2_ACCOUNT_ID: "{{ restic_b2_account_id }}"
+  B2_ACCOUNT_KEY: "{{ restic_b2_application_key }}"
+restic_repo: "b2:{{ restic_bucket_name }}:{{ restic_slug }}"

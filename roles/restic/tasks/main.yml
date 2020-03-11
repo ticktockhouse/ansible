@@ -1,3 +1,9 @@
+- include_vars: b2.yml
+  when: restic_backend == 'backblaze'
+
+- include_vars: s3.yml
+  when: restic_backend == 's3'
+
 - name: Download restic archive
   get_url:
     url: "{{ restic_archive_url }}"
@@ -23,6 +29,15 @@
     remote_src: yes
   become: yes
 
+- name: Check for existence of defined repo
+  #command: "{{ restic_bindir }}/restic list index -r {{ restic_repo }}"
+  #register: repo_check
+  #environment: "{{ restic_env }}"
+  #ignore_errors: yes
+  stat:
+    path: /root/.restic.cf
+  register: repo_check
+
 - set_fact:
     restic_password: "{{ lookup('password', 'dev/null length=32') }}"
 
@@ -30,10 +45,8 @@
   shell: "{{ restic_bindir }}/restic -r {{ restic_repo }} init --password-command='echo {{ restic_password }}'"
   register: repo_init
   environment: "{{ restic_env }}"
-  ignore_errors: yes
-  when: restic_initrepo | bool
-  
-  
+  #ignore_errors: yes
+  when: repo_check.stat.exists == false
 
 #- name: Write an "initial backup" file
   #when: repo_init.rc == 0
@@ -51,6 +64,15 @@
     #owner: root
     #group: root
     mode: 0400
+
+- name: Create restic cache dir
+  file:
+    state: directory
+    recurse: yes
+    path: "{{ restic_cache_dir }}"
+    owner: root
+    group: root
+    mode: 0644
 
 - name: Create simple backup script with chosen directories, if they're defined..
   template:
@@ -87,4 +109,5 @@
 
 - include: cron.yml
   when: restic_cron is defined and restic_cron
+
     
