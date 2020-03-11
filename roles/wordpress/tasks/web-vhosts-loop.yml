@@ -1,19 +1,11 @@
-- name: Concantenate the install and directory into a single variable
+- name: Construct the path for a standard vhost
   set_fact:
     wordpress_path: "{{wp_install_path}}/{{item.domain}}/httpdocs"
-  #when: wordpress_path is not defined
 
 - debug:
-    var: item
+    msg: "*** Running web-vhosts-loop for {{ item.domain }} ***"
 
 - include_tasks: wp-install.yml
 
-- set_fact:
-    subdirs_list: "{{ item.subdirs }}"
-  when: item.subdirs is defined and item.subdirs
-
-- include_tasks: web-subdirs-loop.yml
-  with_items: "{{ subdirs_list }}"
-  when: subdirs_list is defined
-
-#- pause:
+- debug:
+    msg: "*** End of web-vhosts-loop for {{ item.domain }} ***"

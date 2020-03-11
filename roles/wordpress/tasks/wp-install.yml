@@ -1,3 +1,28 @@
+- set_fact:
+    db_user: "{{ item.db_user }}"
+  when: item.db_user is defined and item.db_user
+
+- set_fact:
+    db_name: "{{ item.db_name }}"
+  when: item.db_name is defined and item.db_name
+
+- name: Set DB name
+  set_fact:
+    db_name: "{{ item.slug }}_db"
+  when: item.db_name is not defined
+
+- name: Set DB user
+  set_fact:
+    db_user: "{{ item.slug }}_db_user"
+  when: item.db_user is not defined
+  tags: passwords
+
+- debug:
+    msg: "DB user is {{ db_user }}"
+
+- debug:
+    msg: "DB name is {{ db_name }}"
+
 - name: Create user
   user:
     name: "{{ item.slug }}"
@@ -6,6 +31,11 @@
 - set_fact:
     apache_group: www-data
     apache_owner: www-data
+  when: ansible_os_family == 'Debian'
+
+- set_fact:
+    apache_group: apache
+    apache_owner: apache
   when: ansible_os_family == 'Debian'
 
 - set_fact:
@@ -19,6 +49,7 @@
     owner: "{{ item.slug }}"
     group: "{{ apache_group }}"
     mode: 0775
+
 - name: Create user
   user:
     name: "{{ item.slug }}"
@@ -81,6 +112,8 @@
     name: python-passlib
     state: present
 
+# TODO: Make this conditional
+
 - name: Render the htpasswd file (loop)
   htpasswd:
     path: "{{ htpasswd_file }}"
@@ -90,13 +123,17 @@
     group: "{{ htpasswd_group }}"
     mode: 0640
 
+- name: Get DB password from credstash
+  set_fact:
+    db_password: "{{ lookup('credstash', '{{ db_user }}') }}"
+
 - name: Template WordPress config file
   template:
     src: wp-config.php.j2
     dest: "{{wordpress_path}}/wp-config.php"
     owner: "{{ item.slug }}"
     group: "{{ apache_group }}"
-    mode: 0775
+    mode: 0644
     backup: yes
 
 - name: Change ownership of installation directory
@@ -114,7 +151,10 @@
     path: "{{wordpress_path}}/wp-content/"
     owner: "{{ item.slug }}"
     group: "{{ apache_group }}"
-    mode: 755
+    mode: 0775
     state: directory
     recurse: yes
   when: stat_result.stat.exists == False
+
+- debug:
+    msg: "DB user is {{ db_user }}"

@@ -1,0 +1,56 @@
+- debug:
+    var: db_name
+
+- debug:
+    var: db_user
+
+- name: Test if we already have a DB password defined for this vhost (generic)
+  shell: credstash get {{ db_user }}
+  delegate_to: localhost
+  become: no
+  register: credstash_db_exists_generic
+  ignore_errors: yes
+  tags: passwords
+
+- name: Get DB password from credstash
+  set_fact:
+    db_password: "{{ lookup('credstash', '{{ db_user }}') }}"
+  tags: passwords
+  when:
+    - credstash_db_exists_generic.rc == 0
+
+- name: Set DB password
+  set_fact:
+    db_password: "{{ lookup('password', '/dev/null length=32') }}"
+  tags: passwords
+  #when:
+    #- credstash_db_exists_generic.rc == 1
+
+- name: Add the password to credstash
+  shell: credstash put {{ db_user }} {{ db_password }}
+  delegate_to: localhost
+  become: no
+  when:
+    - credstash_db_exists_generic.rc == 1
+  tags: passwords
+
+
+##############
+- debug: 
+    msg: "{{ db_user }}'s DB password is {{ lookup('credstash', '{{ db_user }}') }}"
+
+- set_fact:
+    mysql_priv: "{{ db_name }}.*:ALL"
+
+- name: Create our WordPress database
+  mysql_db:
+    name: "{{ db_name }}"
+    state: present
+
+- name: Create a new database user and password
+  mysql_user:
+    name: "{{ db_user }}"
+    password: "{{ lookup('credstash', '{{ db_user }}') }}"
+    priv: "{{ mysql_priv }}"
+    host: "{{ web_host }}"
+    state: present

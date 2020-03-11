@@ -1,1 +1,5 @@
-- include_tasks: db-install.yml
+- set_fact:
+    subdirs_list: "{{ item.subdirs }}"
+  when: item.subdirs is defined and item.subdirs
+
+- include_tasks: db-install-tasks.yml

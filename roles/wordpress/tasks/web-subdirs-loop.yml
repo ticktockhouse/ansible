@@ -1,14 +1,11 @@
-- debug:
-    msg: "slug is {{ item.slug }}"
-
-- debug:
-    msg: "dir is {{ item.dir }}"
-
-- debug:
-    msg: "table_prefix is {{ item.table_prefix }}"
-
-- name: Concantenate the install and directory into a single variable
+- name: Construct the path for a subdir install
   set_fact:
-    wordpress_path: "{{wp_install_path}}/{{item.slug}}/httpdocs"
+    wordpress_path: "{{wp_install_path}}/{{ item.slug }}/httpdocs"
+
+- debug:
+    msg: "*** Running web-subdirs-loop for {{ item.slug }} (parent {{ item.parent }}) ***"
 
 - include_tasks: wp-install.yml
+
+- debug:
+    msg: "*** End of web-subdirs-loop for {{ item.slug }} (parent {{ item.parent }}) ***"

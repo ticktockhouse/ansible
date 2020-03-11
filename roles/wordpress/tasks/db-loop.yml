@@ -4,10 +4,12 @@
 - include_tasks: db-install-named.yml
   when: item.db_name is defined
 
-- set_fact:
-    subdirs_list: "{{ item.subdirs }}"
-  when: item.subdirs is defined and item.subdirs
+#- include_tasks: db-install-subdirs.yml
+  #loop: "{{ subdirs_list }}"
+  #loop_control:
+    #loop_var: subdir_loop
+  #when: subdirs_list is defined and subdirs_list
 
-- include_tasks: db-install-subdirs.yml
-  with_items: "{{ subdirs_list }}"
-  when: item.subdirs is defined and item.subdirs
+- include_tasks: db-install-tasks.yml
+
+
