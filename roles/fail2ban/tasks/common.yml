@@ -25,7 +25,7 @@
   notify: restart fail2ban
   tags: configfiles
 
-- name: Put default jails in place
+- name: Put defined jails in place
   template:
     src: defined-jails.conf.j2
     dest: "/etc/fail2ban/jail.d/defined-jails.conf"
