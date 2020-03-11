@@ -10,7 +10,7 @@ PRUNE_TO=$(date +%F -d "$PRUNE_DATE")
 PRUNE_DIR="$BACKUP_DIR_ROOT/$PRUNE_TO"
 MYSQL=/usr/bin/mysql
 MYSQLDUMP=/usr/bin/mysqldump
-DATABASES=$($MYSQL  -e "SHOW DATABASES;" | grep -Ev "(Database|information_schema)")
+DATABASES=$($MYSQL  -e "SHOW DATABASES;" | grep -Ev "(Database|information_schema)"| grep -v "^sys")
 
 mkdir -p $BACKUP_DIR
 rm -rf $PRUNE_DIR

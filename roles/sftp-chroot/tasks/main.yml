@@ -40,6 +40,8 @@
     group: root
     mode: 0755
 
+# TODO - actually add peoples' public keys using a loop
+
 # There's probably a better way to do this than stating all the directory names again...
 
 - name: Create SFTP user directories
