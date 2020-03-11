@@ -1,0 +1,11 @@
+- name: Ensure iptables-persistent (on Debian anyway)
+  apt:
+    name: iptables-persistent
+    state: present
+
+- include_tasks: web.yml
+  when: iptables_web is defined and iptables_web
+
+# Use when we need port 3306 open for some reason
+- include_tasks: web.yml
+  when: iptables_mysql is defined and iptables_mysql
