@@ -1,0 +1,6 @@
+---
+- name: Add NOPASSWD  
+
+- name: Ensure we have a non-root sudoer before the following step
+
+- name: Deny root SSH login

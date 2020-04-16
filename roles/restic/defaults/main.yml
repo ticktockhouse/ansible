@@ -1,0 +1,15 @@
+restic_archive_url: https://github.com/restic/restic/releases/download/v{{ restic_version }}/restic_{{ restic_version }}_linux_amd64.bz2
+restic_version: 0.9.5
+restic_checksum: 08cd75e56a67161e9b16885816f04b2bf1fb5b03bc0677b0ccf3812781c1a2ec
+restic_b2_account_id: "{{  lookup('pipe', 'pass show backblaze/account-id') }}"
+restic_b2_application_key: "{{  lookup('pipe', 'pass show backblaze/application-key') }}"
+restic_repo: "b2:ticktockhouse-backups:{{ restic_slug }}"
+restic_env:
+  B2_ACCOUNT_ID: "{{ restic_b2_account_id }}"
+  B2_ACCOUNT_KEY: "{{ restic_b2_application_key }}"
+restic_env_file: "~/.restic.cf"
+restic_excludes_file: /root/restic-excludes.txt
+restic_bindir: /usr/local/sbin
+restic_tmp_dir: /var/restic/tmp
+restic_cache_dir: /var/restic/cache
+restic_initrepo: yes

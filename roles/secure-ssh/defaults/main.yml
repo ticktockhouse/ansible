@@ -1,0 +1,8 @@
+---
+# The name of ssh daemon
+sshd: sshd
+
+# Location of sshd_config
+sshd_config: /etc/ssh/sshd_config
+
+sudo_group: wheel

@@ -1,0 +1,36 @@
+- name: Install required packages
+  yum:
+    name: "{{ php_fpm_centos_packages }}"
+    state: present
+
+- name: Template mpm.conf
+  template:
+    src: mpm.conf
+    dest: /etc/httpd/conf.modules.d/00-mpm.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart apache
+
+- name: Template php.conf
+  template:
+    src: apache-php.conf
+    dest: /etc/httpd/conf.d/php.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart apache
+
+- name: Template php-fpm's www.conf
+  template:
+    src: php-fpm-www.j2
+    dest: /etc/php-fpm.d/www.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart php-fpm
+
+- name: Enable php-fpm to start on boot
+  service:
+    name: php-fpm
+    enabled: yes

@@ -1,0 +1,67 @@
+---
+- name: Touch the fail2ban.log file
+  file:
+    state: "touch"
+    path: "{{ fail2ban_logtarget }}"
+
+- name: Template fail2ban.conf
+  template:
+    src: "fail2ban.conf.j2"
+    dest: "/etc/fail2ban/fail2ban.conf"
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  notify: restart fail2ban
+  tags: configfiles
+
+- name: Put default jails in place
+  template:
+    src: "default-jails.conf.j2"
+    dest: "/etc/fail2ban/jail.d/default-jails.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart fail2ban
+  tags: configfiles
+
+- name: Put default jails in place
+  template:
+    src: defined-jails.conf.j2
+    dest: "/etc/fail2ban/jail.d/defined-jails.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart fail2ban
+  tags: configfiles
+
+- name: Template default jail.conf
+  template:
+    src: jail.conf.j2
+    dest: "/etc/fail2ban/jail.conf"
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  notify: restart fail2ban
+  tags: configfiles
+
+- name: Add filter files for defined jails
+  template:
+    src: "defined-filters.conf.j2"
+    dest: "/etc/fail2ban/filter.d/{{ item.name }}.conf"
+  with_items: "{{ fail2ban_services }}"
+  notify: restart fail2ban
+  #tags: configfiles
+
+- name: Copy and populate jail.local
+  template:
+    src: jail.local.j2 
+    dest: "/etc/fail2ban/jail.local"
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  notify: restart fail2ban
+  tags: configfiles
+

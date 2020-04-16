@@ -1,0 +1,8 @@
+# Defaults to daily at 0030
+- name: Restic cron job definition
+  cron:
+    name: restic cron job
+    job: "{{ restic_bindir }}/restic-backup.sh > /dev/null 2>&1"
+    hour: "{{ restic_freq_hour | default('0') }}"
+    minute: "{{ restic_freq_minute | default('30') }}"
+    weekday: "{{ restic_freq_weekday | default(omit) }}"

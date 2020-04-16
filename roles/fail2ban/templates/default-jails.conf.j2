@@ -1,0 +1,32 @@
+{% if fail2ban_services_default is iterable %}
+{% for service in fail2ban_services_default %}
+
+[{{ service.name }}]
+enabled = {{ service.enabled|default("true") }}
+{% if service.port is defined %}
+port = {{ service.port }}
+{% endif %}
+{% if service.filter is defined %}
+filter = {{ service.filter }}
+{% endif %}
+logpath = {{ service.logpath }}
+{% if service.maxretry is defined %}
+maxretry = {{ service.maxretry }}
+{% endif %}
+{% if service.protocol is defined %}
+protocol = {{ service.protocol }}
+{% endif %}
+{% if service.action is defined %}
+action = {{ service.action }}
+{% endif %}
+{% if service.banaction is defined %}
+banaction = {{ service.banaction }}
+{% endif %}
+{% if service.bantime is defined %}
+banaction = {{ service.bantime }}
+{% endif %}
+{% if service.findtime is defined %}
+banaction = {{ service.findtime }}
+{% endif %}
+{% endfor %}
+{% endif %}

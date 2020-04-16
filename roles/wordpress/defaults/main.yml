@@ -1,0 +1,14 @@
+# defaults file for wordpress
+wp_install_path : '/var/www/vhosts'
+wp_directory_name: 'default-wp-dir'
+ 
+wp_db_name: "default_wp_db"
+wp_db_username: "default_wp_name"
+wp_db_password: "{{ lookup('password', '/dev/null') }}"
+wp_db_host: "default_wp_dbhost"
+wp_table_prefix: "default_wp"
+wp_debug_mode: "FALSE"
+wp_dl_url: "https://wordpress.org/latest.tar.gz"
+wp_dl_dest: "{{ wp_extract_dest_dir }}/wordpress.tar.gz"
+wp_extract_dest_dir: "/tmp" 
+wp_debug_state: false

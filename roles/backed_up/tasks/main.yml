@@ -1,0 +1,13 @@
+---
+- include_vars: "{{ item }}"
+  with_first_found:
+   - "{{ ansible_distribution }}.yml"
+   - "{{ ansible_os_family }}.yml"
+   - "default.yml"
+
+- include_tasks: mysql.yml
+  when: backup_mysql is defined and backup_mysql
+
+- include_tasks: web.yml
+  when: backup_web is defined and backup_web
+

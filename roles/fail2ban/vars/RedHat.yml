@@ -1,0 +1,1 @@
+fail2ban_auth_log_file: "/var/log/secure"

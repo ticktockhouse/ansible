@@ -1,0 +1,6 @@
+$DefaultNetstreamDriverCAFile {{ papertrail_bundle_location }} # trust these CAs
+$ActionSendStreamDriver gtls # use gtls netstream driver
+$ActionSendStreamDriverMode 1 # require TLS
+$ActionSendStreamDriverAuthMode x509/name # authenticate by hostname
+$ActionSendStreamDriverPermittedPeer *.papertrailapp.com
+*.*    @{{ papertrail_log_server }}:{{ papertrail_log_server_port }}

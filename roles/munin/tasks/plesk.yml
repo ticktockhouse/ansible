@@ -1,0 +1,17 @@
+---
+# Adds a Plesk symlink, will need to sort this out for non-Plesk boxes
+# ???
+
+- name: See if we're plesk-ified (so next steps don't fail if we're not)
+  stat: path="{{ munin_plesk_version_file }}"
+  register: plesk
+
+- name: Add link to default Plesk site for Munin
+  file: src=/var/www/html/munin dest={{ munin_plesk_default_site_path }}/munin state=link
+  when: plesk.stat.exists
+  tags: muninconfig
+
+- name: Copy htaccess file for Plesk to allow symlinks
+  template: src=symlinks.htaccess.j2 dest={{ munin_plesk_default_site_path }}/.htaccess
+  when: plesk.stat.exists
+  tags: muninconfig

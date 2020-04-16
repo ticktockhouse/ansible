@@ -1,0 +1,8 @@
+---
+- name: daemon reload
+  command: systemctl daemon-reload
+
+- name: restart prometheus
+  service:
+    name: prometheus
+    state: restarted

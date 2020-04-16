@@ -1,0 +1,9 @@
+# Always create a user with a home dir if login_users is not defined elsewhere
+login_users:
+  - name: jerry
+    shell: /bin/bash
+    sudo: yes
+    create_home: yes
+# Poor jerrysmate - all he gets is a shell(!)
+  #- name: jerrysmate
+    #shell: /bin/bash

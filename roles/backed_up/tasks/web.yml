@@ -1,0 +1,24 @@
+---
+- name: Create "backup" UNIX user
+  user:
+    name: bkup
+    comment: "Unprivileged user for backups"
+    state: present
+    password: "*"
+    groups: "{{ webserver_group }}"
+
+- name: Add bkup's .ssh directory
+  file:
+    path: /home/bkup/.ssh
+    state: directory
+    mode: 0700
+    owner: bkup
+    group: bkup
+
+- name: Add (empty) authorized_keys file for bkup
+  file:
+    path: /home/bkup/.ssh/authorized_keys
+    state: touch
+    mode: 0600
+    owner: bkup
+    group: bkup

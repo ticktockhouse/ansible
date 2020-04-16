@@ -1,0 +1,6 @@
+[ansible-bootstrap-remi]
+name = Ansible bootstrap for remi
+baseurl = http://rpms.famillecollet.com/enterprise/$releasever/remi/$basearch
+failovermethod = priority
+enabled = 0
+gpgcheck = 0

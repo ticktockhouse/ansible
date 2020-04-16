@@ -1,0 +1,25 @@
+---
+- name: Ensure syslog packages are installed
+  yum:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - rsyslog
+    - rsyslog-gnutls
+
+- name: Download the TLS bundle
+  get_url:
+    url: "{{ papertrail_tls_bundle_url }}"
+    dest: "{{ papertrail_bundle_location }}"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Template the conf file
+  template:
+    src: rsyslog-papertrail.conf.j2
+    dest: "{{ papertrail_rsyslog_conf_location }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart rsyslog

@@ -1,0 +1,18 @@
+- debug:
+    msg: "Run the other stuff and include the other stuff for the {{ item.slug }} vhost below"
+
+- set_fact:
+    subdirs_list: "{{ item.subdirs }}"
+  when: item.subdirs is defined and item.subdirs
+
+#- debug:
+    #msg: "slug is {{ subdir.slug }}"
+  #loop: "{{ subdirs_list }}"
+  #loop_control:
+    #loop_var: subdir
+  #when: item.subdirs is defined and item.subdirs
+
+#- include_tasks: web-subdirs-loop.yml
+  #with_items: "{{ subdirs_list }}"
+  #when: item.subdirs is defined and item.subdirs
+

@@ -1,0 +1,17 @@
+- name: Ensure root vhosts directory exists
+  file:
+    state: directory
+    path: "{{ wp_install_path }}"
+    mode: 0775
+
+- name: Download WP tarball to temp location
+  get_url: 
+    url: "{{ wp_dl_url }}"
+    force: no
+    dest: "{{ wp_dl_dest }}"
+ 
+- name: Extract archive
+  unarchive:
+    src: "{{ wp_dl_dest }}"
+    dest: "{{ wp_extract_dest_dir }}"
+    copy: no

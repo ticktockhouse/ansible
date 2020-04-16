@@ -1,0 +1,5 @@
+- name: Install fail2ban (Debian)
+  apt: pkg=fail2ban state=latest update-cache=yes
+
+- name: Turn on SSH jail by default
+  ini_file: dest=/etc/fail2ban/jail.conf section=ssh option=enabled value=true

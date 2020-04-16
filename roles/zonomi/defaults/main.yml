@@ -1,0 +1,4 @@
+zonomi_domain: example.com
+zonomi_domain_regex: '\\w+-do\\.example\\.com'
+zonomi_api_key: "8032myapikey40jsdlkjf"
+zonomi_api_url: "https://zonomi.com/app/dns/dyndns.jsp"

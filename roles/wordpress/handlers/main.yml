@@ -1,0 +1,6 @@
+### FIXME ###
+- name: restart php-fpm
+  service:
+    name: php72-php-fpm
+    state: restarted
+#############

@@ -1,0 +1,9 @@
+- name: restart apache
+  service:
+    name: httpd
+    state: restarted
+
+- name: restart php-fpm
+  service:
+    name: httpd
+    state: restarted

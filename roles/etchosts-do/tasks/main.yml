@@ -1,0 +1,17 @@
+- name: Register the hosts variable
+  shell: ~/free-code/d-ocean/ansible/digital_ocean.py -d | jq '.droplets[] | .networks.v4[].ip_address + "  " + .name'
+  become: no
+  delegate_to: localhost
+  register: hosts
+
+- debug:
+    var: hosts
+
+- name: Template /etc/hosts
+  template:
+    src: templates/etchosts
+    dest: /etc/hosts
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes

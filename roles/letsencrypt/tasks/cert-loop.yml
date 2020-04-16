@@ -1,0 +1,66 @@
+- set_fact:
+    privkey: "{{ letsencrypt_ssl_private }}/letsencrypt-{{ item.domain }}.key"
+
+- set_fact:
+    csr: "{{ letsencrypt_dir }}/letsencrypt-{{ item.domain }}.csr"
+
+- set_fact:
+    cert: "{{ letsencrypt_dir }}/letsencrypt-{{ item.domain }}.crt"
+
+- name: Generate HTTPS Private Key
+  command: "openssl genrsa -out {{ privkey }} {{ letsencrypt_rsa_key_size }}"
+  args:
+    creates: "{{ privkey }}"
+- name: Protect the file
+  file:
+    path: "{{ privkey }}"
+    mode: 0600
+    owner: root
+    group: root
+
+- name: Generate CSR
+  command: "openssl req -new 
+      -key {{ privkey }} 
+      -out {{ csr }}
+      -nodes -subj '/C=US/ST=SomeState/L=City/O=Org/CN={{ item.domain }}'"
+  args:
+      creates: "{{ csr }}"
+
+- name: Protect the file
+  file:
+    path: "{{ csr }}"
+    mode: 0600
+    owner: root
+    group: root
+
+- name: Requesting Lets Encrypt Challenge
+  acme_certificate:
+    account_email: "{{ letsencrypt_account_email }}"
+    account_key: "{{ letsencrypt_account_key }}"
+    csr: "{{ csr }}"
+    dest: "{{ cert }}"
+  register: challenge
+
+- debug:
+    msg: "'resource' should be {{ challenge['challenge_data'][item.domain]['http-01']['resource'] }}" 
+
+- set_fact:
+    challenge_file_name: "{{ letsencrypt_challenge_dir }}/{{ challenge['challenge_data'][item.domain]['http-01']['resource'] }}"
+
+- set_fact:
+    challenge_file_content: "{{ challenge['challenge_data'][item.domain]['http-01']['resource_value'] }}"
+
+- name: Template the challenge file
+  template:
+    src: challenge_file.j2
+    dest: "{{ challenge_file_name }}"
+    mode: 0644
+  when: challenge|changed 
+
+- name: Responding To Challenge and Fetching Certificate
+  letsencrypt:
+    account_email: "{{ letsencrypt_account_email }}"
+    account_key: "{{ letsencrypt_account_key }}"
+    csr: "{{ req_file }}"
+    dest: "{{ cert_file }}"
+    data: "{{ challenge }}"

@@ -1,0 +1,25 @@
+ 
+- name: Remove wordpress.tar.gz
+  file:
+    path: "{{ wp_dl_dest }}"
+    state: absent
+ 
+- name: Change ownership of installation directory
+  file:
+    path: "{{wordpress_path}}"
+    owner: "{{ apache_owner }}"
+    group: "{{ apache_group }}"
+    state: directory
+    recurse: yes
+    setype: httpd_sys_content_t
+  when: stat_result.stat.exists == False
+ 
+- name: Change ownership of wp-content directory
+  file:
+    path: "{{wordpress_path}}/wp-content/"
+    owner: "{{ apache_owner }}"
+    group: "{{ apache_group }}"
+    mode: 755
+    state: directory
+    recurse: yes
+  when: stat_result.stat.exists == False

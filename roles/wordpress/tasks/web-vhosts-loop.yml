@@ -1,0 +1,18 @@
+- name: Concantenate the install and directory into a single variable
+  set_fact:
+    wordpress_path: "{{wp_install_path}}/{{item.domain}}/httpdocs"
+  #when: wordpress_path is not defined
+
+- debug:
+    var: item
+
+- include_tasks: wp-install.yml
+
+- set_fact:
+    subdirs_list: "{{ item.subdirs }}"
+  when: item.subdirs is defined and item.subdirs
+
+- include_tasks: web-subdirs-loop.yml
+  with_items: "{{ subdirs_list }}"
+
+- pause:

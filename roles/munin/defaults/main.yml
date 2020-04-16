@@ -1,0 +1,5 @@
+munin_plesk_default_site_path: "/var/www/vhosts/default/htdocs"
+munin_plesk_version_file: "/usr/local/psa/version"
+
+munin_htpasswd_path: "/etc/munin/htpasswd"
+munin_files_path: "/var/www/html/munin"

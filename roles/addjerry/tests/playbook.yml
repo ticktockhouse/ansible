@@ -1,0 +1,11 @@
+- hosts: all
+  vars:
+    login_users:
+      - name: jerry
+        sudo: yes
+        create_home: yes
+      - name: jerrysmate
+        gen_ssh: yes
+    secure_ssh: no
+  roles:
+   - addjerry
