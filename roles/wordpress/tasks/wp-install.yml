@@ -135,6 +135,19 @@
     group: "{{ apache_group }}"
     mode: 0644
     backup: yes
+  tags:
+   - update-wp-config
+   - wp-temp
+
+- name: Create WP temp directory
+  file:
+    state: directory
+    path: "{{ wordpress_path }}/wp-content/temp"
+    owner: "{{ item.slug }}"
+    group: "{{ apache_group }}"
+    mode: 0775
+  tags:
+   - wp-temp
 
 - name: Change ownership of installation directory
   file:

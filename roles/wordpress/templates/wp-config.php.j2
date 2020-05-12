@@ -81,6 +81,8 @@ define( 'WP_DEBUG', {{ wp_debug_state }} );
 
 define('FS_METHOD', 'direct');
 
+define('WP_TEMP_DIR',dirname(__FILE__). '/wp-content/temp/');
+
 {% if item.multisite is defined and item.multisite is sameas true %}
 ################### MULTISITE STUFF ##################
 

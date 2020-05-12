@@ -9,9 +9,11 @@
     url: "{{ wp_dl_url }}"
     force: no
     dest: "{{ wp_dl_dest }}"
+  when: not ansible_check_mode
  
 - name: Extract archive
   unarchive:
     src: "{{ wp_dl_dest }}"
     dest: "{{ wp_extract_dest_dir }}"
     copy: no
+  when: not ansible_check_mode
