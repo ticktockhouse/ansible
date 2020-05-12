@@ -10,3 +10,4 @@ restic_tmp_dir: /var/restic/tmp
 restic_cache_dir: /var/restic/cache
 restic_initrepo: yes
 restic_bucket_name: ticktockhouse-backups
+restic_backend: backblaze
