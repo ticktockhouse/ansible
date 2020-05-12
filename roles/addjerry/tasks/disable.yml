@@ -1,3 +1,5 @@
+# Nicked from: https://relativkreativ.at/articles/how-to-use-ansibles-lineinfile-module-in-a-bulletproof-way
+
 - name: Nuke lines for idempotency
   lineinfile:
     dest: /etc/ssh/sshd_config 
