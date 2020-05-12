@@ -1,0 +1,15 @@
+- hosts: all
+  vars:
+    awscli_profiles:
+      default:
+        aws_access_key_id: DEFAULT-EXAMPLE-KEY-ID
+        aws_secret_access_key: DEFAULT-SECRET_ACCESS-KEY-ID
+      other_profile: 
+        aws_access_key_id: DEFAULT-EXAMPLE-KEY-ID-2
+        aws_secret_access_key: DEFAULT-SECRET_ACCESS-KEY-ID-2
+    awscli_users:
+      root:
+        profiles:
+          - default
+  roles:
+    - awscli

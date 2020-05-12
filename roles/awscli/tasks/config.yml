@@ -1,0 +1,29 @@
+- name: configuration | setup .aws directories
+  file:
+    path: "~{{ item.key }}/.aws"
+    state: directory
+    owner: "{{ item.key }}"
+    group: "{{ item.key }}"
+    mode: 0700
+  with_dict: "{{ awscli_users }}"
+  become: yes
+
+- name: configuration | setup profiles
+  template:
+    src: credentials.j2
+    dest: "~{{ item.key }}/.aws/credentials"
+    owner: "{{ item.key }}"
+    group: "{{ item.key }}"
+    mode: 0400
+  with_dict: "{{ awscli_users }}"
+  become: yes
+
+- name: configuration | setup configuration
+  template:
+    src: config.j2
+    dest: "~{{ item.key }}/.aws/config"
+    owner: "{{ item.key }}"
+    group: "{{ item.key }}"
+    mode: 0400
+  with_dict: "{{ awscli_users }}"
+  become: yes

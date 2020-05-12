@@ -1,0 +1,4 @@
+- name: Install the awscli package
+  package:
+    name: awscli
+    state: present

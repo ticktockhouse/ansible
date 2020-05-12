@@ -1,0 +1,20 @@
+{% if item.value['configuration'] is defined %}
+{% for profile, config in item.value['configuration'].iteritems() | sort %}
+
+{% if profile == 'default' %}
+[{{ profile }}]
+{% else %}
+[profile {{ profile }}]
+{% endif %}
+{% for parameter, value in awscli_configuration[ config ].iteritems() | sort %}
+{% if value is mapping %}
+{{ parameter }} =
+{% for nested_parameter, nested_value in value.iteritems() | sort %}
+    {{ nested_parameter }} = {{ nested_value }}
+{% endfor %}
+{% else %}
+{{ parameter }}={{ value }}
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endif %}
