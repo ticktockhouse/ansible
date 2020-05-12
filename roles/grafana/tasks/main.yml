@@ -1,0 +1,30 @@
+- name: Add grafana APT key
+  apt_key:
+    url: "{{ grafana_apt_key }}"
+    state: present
+
+
+- name: Add grafana apt repo
+  apt_repository:
+    repo: "{{ grafana_apt_repo }}"
+    state: present
+
+- name: Install grafana
+  apt:
+    name: grafana
+    state: present
+
+- set_fact:
+    grafana_password: "{{ lookup('password', '/dev/null') }}"
+
+- name: Template grafana.ini
+  template:
+    src: grafana.ini.j2
+    dest: /etc/grafana/grafana.ini
+    backup: yes
+  notify: restart grafana
+    
+- name: Ensure server is started
+  service:
+    name: grafana-server
+    state: started

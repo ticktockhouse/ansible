@@ -1,0 +1,3 @@
+grafana_apt_repo: deb https://packages.grafana.com/oss/deb stable main
+grafana_apt_key: https://packages.grafana.com/gpg.key
+grafana_listen_address: 127.0.0.1

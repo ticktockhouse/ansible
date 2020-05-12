@@ -1,0 +1,10 @@
+[server]
+# Protocol (http, https, h2, socket)
+;protocol = http
+
+# The ip address to bind to, empty will bind to all interfaces
+http_addr = {{ grafana_listen_address }}
+
+[security]
+admin_password = {{ grafana_password }}
+
