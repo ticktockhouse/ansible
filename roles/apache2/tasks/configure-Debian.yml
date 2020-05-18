@@ -9,18 +9,12 @@
   notify: restart apache
 
 - name: Enable Apache mods.
-  file:
-    src: "{{ apache_server_root }}/mods-available/{{ item }}.conf"
-    dest: "{{ apache_server_root }}/mods-enabled/{{ item }}.conf"
-    state: link
-  with_items: "{{ apache_mods_enabled }}"
+  shell: "a2enmod {{ item }}"
+  loop: "{{ apache_mods_enabled }}"
   notify: restart apache
-  ignore_errors: yes
 
 - name: Disable Apache mods.
-  file:
-    path: "{{ apache_server_root }}/mods-enabled/{{ item }}"
-    state: absent
+  shell: "a2dismod {{ item }}"
   with_items: "{{ apache_mods_disabled }}"
   notify: restart apache
 
