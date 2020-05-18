@@ -36,7 +36,7 @@
 - set_fact:
     apache_group: apache
     apache_owner: apache
-  when: ansible_os_family == 'Debian'
+  when: ansible_os_family == 'RedHat'
 
 - set_fact:
     htpasswd_group: "{{ apache_group }}"
