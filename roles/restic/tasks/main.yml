@@ -39,7 +39,8 @@
   register: repo_check
 
 - set_fact:
-    restic_password: "{{ lookup('password', 'dev/null length=32') }}"
+    restic_password: "{{ lookup('password', '/dev/null length=32') }}"
+  when: repo_check.stat.exists == false
 
 - name: Create the repo if it doesn't exist
   shell: "{{ restic_bindir }}/restic -r {{ restic_repo }} init --password-command='echo {{ restic_password }}'"
@@ -64,6 +65,7 @@
     #owner: root
     #group: root
     mode: 0400
+  when: repo_check.stat.exists == false
 
 - name: Create restic cache dir
   file:
@@ -85,7 +87,13 @@
     - restic_backup_dirs is defined and restic_backup_dirs
     - restic_mail_wrapper is not defined
 
-- name: Create simple backup script with chosen directories, if they're defined..
+- debug:
+    var: restic_backup_dirs
+
+- debug:
+    var: restic_mail_wrapper
+
+- name: Create simple backup script with email capability with chosen directories, if they're defined..
   template:
     src: restic-backup-mail.sh.j2
     dest: "{{ restic_bindir }}/restic-backup.sh"
@@ -95,6 +103,16 @@
   when: 
     - restic_backup_dirs is defined and restic_backup_dirs
     - restic_mail_wrapper is defined and restic_mail_wrapper
+
+- name: Create simple backup script with email capability with chosen directories, if they're defined..
+  template:
+    src: restic-backup.sh.j2
+    dest: "{{ restic_bindir }}/restic-backup.sh"
+    owner: root
+    group: root
+    mode: 0755
+  when: 
+    - restic_backup_dirs is defined and restic_backup_dirs
 
 - name: Create restic-excludes file
   template:
@@ -109,5 +127,3 @@
 
 - include: cron.yml
   when: restic_cron is defined and restic_cron
-
-    
