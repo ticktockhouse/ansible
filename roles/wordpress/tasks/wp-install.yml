@@ -1,3 +1,6 @@
+- debug:
+    var: db_server
+
 - set_fact:
     db_user: "{{ item.db_user }}"
   when: item.db_user is defined and item.db_user
