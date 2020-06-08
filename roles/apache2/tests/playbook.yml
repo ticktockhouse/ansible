@@ -1,0 +1,12 @@
+- hosts: all
+  vars:
+    new_vhosts:
+      - domain: test.site.xyz
+        slug: testsite
+    apache_mods_enabled:
+      - rewrite
+      - ssl
+      - headers
+      - expires
+  roles:
+    - apache2

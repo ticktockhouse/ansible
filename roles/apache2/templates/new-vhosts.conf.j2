@@ -50,9 +50,15 @@
     Require all granted
 {% endif %}
   </Directory>
+{% if apache_global_vhost_based_logs is defined %}
+	ErrorLog {{ apache_vhosts_root }}/{{ vhost.domain }}/logs/{{ vhost.domain }}-error.log
+	LogLevel warn
+  CustomLog {{ apache_vhosts_root }}/{{ vhost.domain }}/logs/{{ vhost.domain }}-access.log combined
+{% else %}
 	ErrorLog /var/log/{{ apache_daemon }}/{{ vhost.domain }}-error.log
 	LogLevel warn
   CustomLog /var/log/{{ apache_daemon }}/{{ vhost.domain }}-access.log combined
+{% endif %}
 {% if vhost.php_fpm is defined %}
 <IfModule proxy_fcgi_module>
     # Enable http authorization headers
