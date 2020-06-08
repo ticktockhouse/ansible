@@ -1,0 +1,25 @@
+- name: Download restic archive
+  get_url:
+    url: "{{ restic_archive_url }}"
+    dest: "./restic_{{ restic_version }}_linux_amd64.bz2"
+    checksum: "sha256:{{ restic_checksum }}"
+
+- name: Ensure bunzip2 is installed
+  package:
+    name: bzip2
+    state: present
+
+- name: Unarchive it
+  shell: bunzip2 ./restic_{{ restic_version }}_linux_amd64.bz2
+  args:
+    creates: ./restic_{{ restic_version }}_linux_amd64
+
+- name: Copy the file to bindir
+  copy:
+    src:  "./restic_{{ restic_version }}_linux_amd64"
+    dest: "{{ restic_bindir }}/restic"
+    owner: root
+    group: root
+    mode: 0755
+    remote_src: yes
+  become: yes

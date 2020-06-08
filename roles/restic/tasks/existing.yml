@@ -1,0 +1,7 @@
+- name: Template the restic env var config file
+  template:
+    src: restic-env-loop.j2
+    dest: "/root/restic-{{ item.restic_repo }}.cf"
+    #owner: root
+    #group: root
+    mode: 0400
