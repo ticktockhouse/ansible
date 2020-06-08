@@ -1,3 +1,4 @@
 ---
 webserver_user: apache
 webserver_group: apache
+mysql_python_package: MySQL-python

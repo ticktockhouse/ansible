@@ -1,5 +1,10 @@
 ---
 # Stick backup_user_password in host_vars/<hostname>, or in the governing playbook
+- name: Ensure mysql-python is installed
+  package:
+    name: "{{ mysql_python_package }}"
+    state: present
+
 - set_fact:
     backed_up_mysql_password: "{{ lookup('password', '/dev/null length=32') }}"
 
