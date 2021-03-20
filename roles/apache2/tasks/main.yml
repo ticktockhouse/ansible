@@ -40,6 +40,31 @@
 - name: Configure Apache.
   include_tasks: "configure-{{ ansible_os_family }}.yml"
 
+- name: Create vhosts base directory
+  file:
+    state: directory
+    path: "{{ apache_vhosts_root }}"
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create vhost users
+  user:
+    name: "{{ item.slug }}"
+    state: present
+  loop: "{{ new_vhosts }}"
+
+
+- name: Create vhosts directories
+  file:
+    state: directory
+    path: "{{ apache_vhosts_root }}/{{ item.domain }}/httpdocs"
+    owner: "{{ item.slug }}"
+    group: "{{ item.slug }}"
+    mode: 0755
+  loop: "{{ new_vhosts }}"
+
+
 - name: Ensure Apache has selected state and enabled on boot.
   service:
     name: "{{ apache_service }}"

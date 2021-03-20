@@ -39,6 +39,11 @@
 {% if vhost.certificate_chain_file is defined %}
   SSLCertificateChainFile {{ vhost.certificate_chain_file }}
 {% endif %}
+{% if vhost.tls_custom is defined %}
+  SSLCertificateFile {{ tls_custom_cert_file }}
+  SSLCertificateKeyFile {{ tls_custom_key_file }}
+  SSLCertificateChainFile {{ tls_custom_chain_file }}
+{% endif %}
 {% endif %}
   <Directory "{{ apache_vhosts_root }}/{{ vhost.domain }}/httpdocs">
     AllowOverride {{ vhost.allow_override | default(apache_allow_override) }}

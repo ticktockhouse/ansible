@@ -2,7 +2,6 @@
 - debug:
     var: apache_ports_configuration_items
     
-
 - name: Configure Apache.
   lineinfile:
     dest: "{{ apache_server_root }}/conf/{{ apache_daemon }}.conf"
@@ -12,8 +11,25 @@
   with_items: "{{ apache_ports_configuration_items }}"
   notify: restart apache
 
+- name: create sites directories
+  file:
+    state: directory
+    path: "{{ apache_conf_path }}/{{ item }}"
+    owner: root
+    group: root
+    mode: 0755
+  loop: "{{ apache_sites_dirs }}"
+
+- name: Add sites-enabled config path
+  lineinfile:
+    dest: "{{ apache_server_root }}/conf/{{ apache_daemon }}.conf"
+    line: "IncludeOptional conf.d/sites-enabled/*.conf"
+    state: present
+  notify: restart apache
+
 - name: Check whether certificates defined in vhosts exist.
-  stat: path={{ item.certificate_file }}
+  stat:
+    path: "{{ item.certificate_file }}"
   register: apache_ssl_certificates
   with_items: "{{ apache_vhosts_ssl }}"
 
@@ -27,15 +43,35 @@
   notify: restart apache
   when: apache_create_vhosts
 
-- name: Template a Wordpress vhost config
+- name: Add apache vhosts configuration [Wordpress]
   template:
     src: "{{ apache_wordpress_vhosts_template }}"
-    dest: "{{ apache_conf_path }}/{{ apache_wordpress_vhosts_filename }}"
+    dest: "{{ apache_conf_path }}/sites-available/{{ apache_wordpress_vhosts_filename }}"
     owner: root
     group: root
     mode: 0644
     backup: yes
   notify: restart apache
-  with_items: "{{ wordpress_vhosts }}"
-  when: wordpress_vhosts is defined and wordpress_vhosts
-  tags: wordpress
+  when: apache_create_vhosts
+
+- name: Add apache vhosts configuration [New]
+  template:
+    src: "{{ apache_new_vhosts_template }}"
+    dest: "{{ apache_conf_path }}/sites-available/{{ apache_new_vhosts_filename }}"
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  notify: restart apache
+  when: apache_create_vhosts
+
+- name: Add vhost symlink in sites-enabled.
+  file:
+    src: "{{ apache_conf_path }}/sites-available/{{ item }}"
+    dest: "{{ apache_conf_path }}/sites-enabled/{{ item }}"
+    state: link
+  notify: restart apache
+  when: apache_create_vhosts
+  with_items:
+    - "{{ apache_wordpress_vhosts_filename }}"
+    - "{{ apache_new_vhosts_filename }}"

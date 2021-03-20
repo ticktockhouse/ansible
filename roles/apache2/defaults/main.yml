@@ -8,6 +8,9 @@ apache_listen_port: 80
 apache_listen_port_ssl: 443
 
 apache_create_vhosts: true
+apache_sites_dirs:
+  - sites-available
+  - sites-enabled
 apache_vhosts_root: "/var/www/vhosts"
 apache_vhosts_filename: "vhosts.conf"
 apache_vhosts_template: "vhosts.conf.j2"
