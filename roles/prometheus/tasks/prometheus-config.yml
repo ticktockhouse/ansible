@@ -1,0 +1,25 @@
+- name: Add prometheus.yml
+  template:
+    src: readable-prometheus.yml.j2
+    # src: prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+    owner: prometheus
+    group: prometheus
+    mode: 0644
+    backup: yes
+  # notify: restart prometheus
+  tags: config
+
+- name: Add file_sd files
+  template:
+    src: file-sd-{{ item }}.yml.j2
+    # src: prometheus.yml.j2
+    dest: /etc/prometheus/file_sd/{{ item }}.yml
+    owner: prometheus
+    group: prometheus
+    mode: 0644
+    backup: yes
+  # notify: restart prometheus
+  loop: 
+    - node
+  tags: config

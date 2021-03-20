@@ -19,12 +19,12 @@
 - name: Download prometheus tarball
   get_url:
     url: "{{ prometheus_download_url }}"
-    dest: "{{ prometheus_download_location }}" 
+    dest: "{{ prometheus_download_location }}"
     checksum: "sha256:{{ prometheus_sha256sum }}"
 
 - name: Extract said tarball
   unarchive:
-    src: "{{ prometheus_download_location }}"  
+    src: "{{ prometheus_download_location }}"
     dest: "/root/"
     remote_src: true
 
@@ -44,7 +44,7 @@
     dest: "/etc/prometheus/{{ item }}"
   delegate_to: "{{ inventory_hostname }}"
   with_items: "{{ prometheus_console_dirs }}"
-    
+
 - name: Correct the permissions on the dirs
   file:
     dest: /etc/prometheus
@@ -55,12 +55,29 @@
 
 - name: Add prometheus.yml
   template:
-    src: prometheus.yml.j2
+    src: readable-prometheus.yml.j2
+    # src: prometheus.yml.j2
     dest: /etc/prometheus/prometheus.yml
     owner: prometheus
     group: prometheus
     mode: 0644
+    backup: yes
   notify: restart prometheus
+  tags: config
+
+- name: Add file_sd files
+  template:
+    src: file-sd-{{ item }}.yml.j2
+    # src: prometheus.yml.j2
+    dest: /etc/prometheus/file_sd/{{ item }}.yml
+    owner: prometheus
+    group: prometheus
+    mode: 0644
+    backup: yes
+  notify: restart prometheus
+  loop: 
+    - node
+  tags: config
 
 - name: Add prometheus systemd unit
   template:

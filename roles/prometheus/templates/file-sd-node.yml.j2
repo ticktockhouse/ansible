@@ -1,0 +1,6 @@
+- labels:
+    job: node
+  targets:
+{% for node in prometheus_node_targets %}
+    - {{ node }}:9100
+{% endfor %}

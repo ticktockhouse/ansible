@@ -1,6 +1,8 @@
 ---
-- include_tasks: prometheus.yml
+- include_tasks: prometheus-install.yml
   when: prometheus_install is defined
 
-- include_tasks: node-exporter.yml
-  when: node_exporter_install is defined
+- include_tasks: prometheus-config.yml
+
+# - include_tasks: node-exporter.yml
+#   when: node_exporter_install is defined
