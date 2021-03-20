@@ -13,8 +13,10 @@
     name: "{{ item.name }}"
     password: "{{ item.password }}"
     host: "{{ item.host|default('localhost') }}"
-    priv: "{{ item.priv | default('omit') }}"
-    append_privs: "{{ item.append_privs|default('no') }}"
+    priv: "{{ item.priv | default(omit) }}"
+    # append_privs: "{{ item.append_privs|default('no') }}"
     state: present
   with_items: "{{ mariadb_users }}"
-  tags: mariadb
+  tags:
+    - mariadb
+    - mariadb-users
