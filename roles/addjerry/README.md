@@ -13,7 +13,7 @@ login_users:
 ## no sudo for you matey!!!
 ```
 
-Expects key files (somewhat unconventionally) to be provided as the files/ directory of the role, in the format `<username>.key.pub`. Will ignore errors if no key exists
+Expects key files (somewhat unconventionally) to be provided as the `files/` directory of the role, in the format `<username>.key.pub`. Will ignore errors if no key exists
 
 If `secure_ssh` is defined, it will make sure root SSH is turned off.
 

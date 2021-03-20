@@ -57,7 +57,7 @@
 - name: Add authorized keys
   authorized_key:
     user: "{{ item.name }}"
-    key: "{{ lookup('file', 'files/'+ item.name + '.key.pub') }}"
+    key: "{{ lookup('file', '{{ playbook_dir }}/files/'+ item.name + '.key.pub') }}"
   with_items: "{{ login_users }}"
   ignore_errors: yes
 
