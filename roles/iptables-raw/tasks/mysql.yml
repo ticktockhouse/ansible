@@ -1,20 +1,6 @@
 - name: Add iptables rules
   iptables_raw:
-    name: Allow loopback - related - established - SSH
-    state: present
-    keep_unmanaged: no
-    weight: 10
-    rules: |
-      -P INPUT ACCEPT
-      -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-      -A INPUT -i lo -j ACCEPT
-      -A OUTPUT -o lo -j ACCEPT
-      -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
-  tags: iptables
-
-- name: Add iptables rules
-  iptables_raw:
-    name: mysql server rules
+    name: mysql from web host
     state: present
     keep_unmanaged: no
     weight: 50
@@ -24,10 +10,12 @@
 
 - name: Add iptables rules
   iptables_raw:
-    name: Reject everything else
+    name: "mysql remote IP {{ item }}"
     state: present
     keep_unmanaged: no
-    weight: 90
+    weight: 50
     rules: |
-      -A INPUT -j REJECT --reject-with icmp-host-prohibited
+      -A INPUT -p tcp -s {{ item }}/32 --dport 3306 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT 
+  loop: "{{ mysql_remote_ips }}"
+  when: mysql_remote_ips is defined and mysql_remote_ips
   tags: iptables

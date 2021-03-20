@@ -3,9 +3,33 @@
     name: iptables-persistent
     state: present
 
+- name: Add iptables rules
+  iptables_raw:
+    name: Allow loopback - related - established - SSH
+    state: present
+    keep_unmanaged: no
+    weight: 10
+    rules: |
+      -P INPUT ACCEPT
+      -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+      -A INPUT -i lo -j ACCEPT
+      -A OUTPUT -o lo -j ACCEPT
+      -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+  tags: iptables
+
 - include_tasks: web.yml
   when: iptables_web is defined and iptables_web
 
 # Use when we need port 3306 open for some reason
-- include_tasks: web.yml
+- include_tasks: mysql.yml
   when: iptables_mysql is defined and iptables_mysql
+
+- name: Add iptables rules
+  iptables_raw:
+    name: Reject everything else
+    state: present
+    keep_unmanaged: no
+    weight: 90
+    rules: |
+      -A INPUT -j REJECT --reject-with icmp-host-prohibited
+  tags: iptables
