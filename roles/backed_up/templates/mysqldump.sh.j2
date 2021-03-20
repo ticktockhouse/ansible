@@ -15,6 +15,13 @@ DATABASES=$($MYSQL  -e "SHOW DATABASES;" | grep -Ev "(Database|information_schem
 mkdir -p $BACKUP_DIR
 rm -rf $PRUNE_DIR
 
+# Make sure "latest" symlink points to latest backup
+if [ -L $BACKUP_DIR_ROOT/latest ]; then
+  unlink $BACKUP_DIR_ROOT/latest
+  ln -s $BACKUP_DIR $BACKUP_DIR_ROOT/latest
+else
+  ln -s $BACKUP_DIR $BACKUP_DIR_ROOT/latest
+fi
 
 cd $BACKUP_DIR
 

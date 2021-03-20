@@ -19,33 +19,33 @@
 
 - name: Create "backup" UNIX user
   user:
-    name: bkup
+    name: "{{ backed_up_user }}"
     comment: "Unprivileged user for backups"
     state: present
     password: "*" 
 
 - name: Add bkup's .ssh directory
   file:
-    path: /home/bkup/.ssh
+    path: /home/"{{ backed_up_user }}"/.ssh
     state: directory
     mode: 0700
-    owner: bkup
-    group: bkup
+    owner: "{{ backed_up_user }}"
+    group: "{{ backed_up_group }}"
 
 - name: Add (empty) authorized_keys file for bkup
   file:
-    path: /home/bkup/.ssh/authorized_keys
+    path: /home/"{{ backed_up_user }}"/.ssh/authorized_keys
     state: touch
     mode: 0600
-    owner: bkup
-    group: bkup
+    owner: "{{ backed_up_user }}"
+    group: "{{ backed_up_group }}"
 
 - name: Copy .my.cnf into place
   template:
     src: my.cnf.j2
-    dest: ~bkup/.my.cnf
-    owner: bkup
-    group: bkup
+    dest: "~{{ backed_up_user }}/.my.cnf"
+    owner: "{{ backed_up_user }}"
+    group: "{{ backed_up_group }}"
 
 - name: Mysql backup cron script
   template:
@@ -56,14 +56,18 @@
 - name: Add cron job
   cron:
     name: "Dump individual mysql DBs"
-    hour: 1
-    minute: 0
-    user: bkup
+    hour: "{{ backed_up_cron_hour }}"
+    minute:  "{{ backed_up_cron_minute }}"
+    user: "{{ backed_up_user }}"
     job: /usr/local/bin/mysqldump.sh
 
 - name: Add mysqldump dir for er... mysql dumps
   file:
     path: "{{ backed_up_mysqldump_dir }}"
     state: directory
-    owner: bkup
-    group: bkup
+    owner: "{{ backed_up_user }}"
+    group: "{{ backed_up_group }}"
+
+- set_fact:
+    restic_backup_dirs:
+      - "{{ backed_up_mysqldump_dir }}"
