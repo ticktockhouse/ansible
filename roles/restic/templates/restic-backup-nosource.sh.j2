@@ -1,12 +1,10 @@
 #!/bin/bash
 
-# I created a new template (restic-backup-nosource.sh.j2) so as not to
-# break backwards-compatibility so if this role is run again on one of 
-# those machines, it won't break existing cron jobs
+# I created a new template so as not to break backwards-compatibility so if this role
+# is run again on one of those machines, it won't break existing cron jobs
 
 set -e
 
-source {{ restic_env_file }}
 export TMPDIR={{ restic_tmp_dir }}
 
 mkdir -p $TMPDIR

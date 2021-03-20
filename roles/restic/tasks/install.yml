@@ -4,10 +4,13 @@
     dest: "./restic_{{ restic_version }}_linux_amd64.bz2"
     checksum: "sha256:{{ restic_checksum }}"
 
-- name: Ensure bunzip2 is installed
+- name: Ensure relevant packages are installed
   package:
-    name: bzip2
+    name: "{{ item }}"
     state: present
+  loop:
+    - bzip2
+    - fuse
 
 - name: Unarchive it
   shell: bunzip2 ./restic_{{ restic_version }}_linux_amd64.bz2

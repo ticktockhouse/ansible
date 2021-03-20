@@ -29,49 +29,13 @@
     group: root
     mode: 0644
 
-- name: Create simple backup script with chosen directories, if they're defined..
-  template:
-    src: restic-backup.sh.j2
-    dest: "{{ restic_bindir }}/restic-backup.sh"
-    owner: root
-    group: root
-    mode: 0755
-  when: 
-    - restic_backup_dirs is defined and restic_backup_dirs
-    - restic_mail_wrapper is not defined
-
-- debug:
-    var: restic_backup_dirs
-
-- debug:
-    var: restic_mail_wrapper
-
-- name: Create simple backup script with email capability with chosen directories, if they're defined..
-  template:
-    src: restic-backup-mail.sh.j2
-    dest: "{{ restic_bindir }}/restic-backup.sh"
-    owner: root
-    group: root
-    mode: 0755
-  when: 
-    - restic_backup_dirs is defined and restic_backup_dirs
-    - restic_mail_wrapper is defined and restic_mail_wrapper
-
-- name: Create simple backup script with email capability with chosen directories, if they're defined..
-  template:
-    src: restic-backup.sh.j2
-    dest: "{{ restic_bindir }}/restic-backup.sh"
-    owner: root
-    group: root
-    mode: 0755
-  when: 
-    - restic_backup_dirs is defined and restic_backup_dirs
-
 - name: Create restic-excludes file
   template:
     src: restic-excludes.txt.j2
     dest: "{{ restic_excludes_file }}"
     mode: 0755
+
+
     
 
 #TODO:

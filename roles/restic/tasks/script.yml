@@ -1,0 +1,33 @@
+- debug:
+    var: restic_backup_dirs
+
+- name: Create simple backup script with chosen directories, if they're defined..
+  template:
+    src: restic-backup.sh.j2
+    dest: "{{ restic_bindir }}/restic-backup.sh"
+    owner: root
+    group: root
+    mode: 0755
+  when: 
+    - restic_mail_wrapper is not defined
+
+- name: Create simple nosource backup script with chosen directories, if they're defined..
+  template:
+    src: restic-backup-nosource.sh.j2
+    dest: "{{ restic_bindir }}/restic-backup.sh"
+    owner: root
+    group: root
+    mode: 0755
+  when: 
+    - restic_mail_wrapper is not defined
+    - restic_script_nosource is defined and restic_script_nosource
+
+- name: Create simple backup script with email capability with chosen directories, if they're defined..
+  template:
+    src: restic-backup-mail.sh.j2
+    dest: "{{ restic_bindir }}/restic-backup.sh"
+    owner: root
+    group: root
+    mode: 0755
+  when: 
+    - restic_mail_wrapper is defined and restic_mail_wrapper

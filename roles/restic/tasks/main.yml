@@ -4,12 +4,17 @@
 - include_vars: s3.yml
   when: restic_backend == 's3'
 
+- include_tasks: install.yml
+
 - include_tasks: init.yml
   when: restic_repo_init is defined and restic_repo_init
 
 - include_tasks: existing.yml
   when: restic_existing_repos is defined and restic_existing_repos
   loop: "{{ restic_existing_repos }}"
+
+- include_tasks: script.yml
+  when: restic_backup_dirs is defined and restic_backup_dirs
 
 - include: cron.yml
   when: restic_cron is defined and restic_cron
