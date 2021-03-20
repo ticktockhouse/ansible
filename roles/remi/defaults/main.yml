@@ -1,11 +1,19 @@
-remi_php_version: "{{ php_version.split('.') | join ('') }}"
-remi_php_major_version: 7
+remi_php_major_version: "{{ php_version.split('.')[0] }}"
+remi_php_version: "{{ php_version | replace('.', '') }}"
 remi_php_package: "http://rpms.remirepo.net/enterprise/remi-release-{{ remi_php_major_version }}.rpm"
-epel_repo_package: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ remi_php_major_version }}.noarch.rpm"
+epel_repo_package: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
 remi_php_baseurl: "http://rpms.remirepo.net/enterprise/{{ remi_php_major_version }}/{{ remi_php_version }}/$basearch/"
-remi_php_packages:
-  - "php{{ remi_php_version }}-php-common"
-  - "php{{ remi_php_version }}-php-fpm"
+remi_repo_name: "remi-php{{ remi_php_version }}"
+remi_default_php_packages:
+  - php
+  - php-mcrypt
+  - php-cli
+  - php-gd
+  - php-curl
+  - php-mysql
+  - php-ldap
+  - php-zip
+  - php-fileinfo
 remi_default_packages:
   - "{{ epel_repo_package }}"
   - "{{ remi_php_package }}"
