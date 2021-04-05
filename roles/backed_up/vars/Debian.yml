@@ -1,3 +1,4 @@
 ---
 webserver_user: www-data
 webserver_group: www-data
+mysql_python_package: python3-mysqldb
