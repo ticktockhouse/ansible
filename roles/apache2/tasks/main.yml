@@ -53,6 +53,7 @@
     name: "{{ item.slug }}"
     state: present
   loop: "{{ new_vhosts }}"
+  when: new_vhosts is defined and new_vhosts
 
 
 - name: Create vhosts directories
@@ -63,10 +64,4 @@
     group: "{{ item.slug }}"
     mode: 0755
   loop: "{{ new_vhosts }}"
-
-
-- name: Ensure Apache has selected state and enabled on boot.
-  service:
-    name: "{{ apache_service }}"
-    state: "{{ apache_state }}"
-    enabled: true
+  when: new_vhosts is defined and new_vhosts

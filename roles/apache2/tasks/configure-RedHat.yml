@@ -52,7 +52,9 @@
     mode: 0644
     backup: yes
   notify: restart apache
-  when: apache_create_vhosts
+  when:
+    - apache_create_vhosts
+    - wordpress_vhosts is defined and wordpress_vhosts
 
 - name: Add apache vhosts configuration [New]
   template:
@@ -63,7 +65,10 @@
     mode: 0644
     backup: yes
   notify: restart apache
-  when: apache_create_vhosts
+  when:
+    - apache_create_vhosts
+    - new_vhosts is defined and new_vhosts
+  
 
 - name: Add vhost symlink in sites-enabled.
   file:
@@ -71,7 +76,20 @@
     dest: "{{ apache_conf_path }}/sites-enabled/{{ item }}"
     state: link
   notify: restart apache
-  when: apache_create_vhosts
+  when:
+    - apache_create_vhosts
+    - wordpress_vhosts is defined and wordpress_vhosts
   with_items:
     - "{{ apache_wordpress_vhosts_filename }}"
-    - "{{ apache_new_vhosts_filename }}"
+
+- name: Add vhost symlink in sites-enabled.
+  file:
+    src: "{{ apache_conf_path }}/sites-available/{{ item }}"
+    dest: "{{ apache_conf_path }}/sites-enabled/{{ item }}"
+    state: link
+  notify: restart apache
+  when:
+    - apache_create_vhosts
+    - new_vhosts is defined and new_vhosts
+  with_items:
+    - "{{ apache_wordpress_vhosts_filename }}"
