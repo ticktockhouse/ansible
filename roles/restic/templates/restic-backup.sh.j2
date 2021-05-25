@@ -16,3 +16,6 @@ touch {{ restic_excludes_file }}
 {% for dir in restic_backup_dirs %}
 {{ restic_bindir }}/restic backup --verbose {{ dir }} --exclude-file={{ restic_excludes_file }} --cache-dir {{ restic_cache_dir }}
 {% endfor %}
+
+{# boilerplate policy, please parameterise #}
+{{ restic_bindir }}/restic forget --keep-daily 7 --keep-weekly 5 --keep-monthly 12 --keep-yearly 10 --prune
