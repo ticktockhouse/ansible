@@ -1,0 +1,20 @@
+- name: Prerequisite - Ensure uuidgen is installed
+  package:
+    name: uuid-runtime
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: Prerequisite - Ensure uuidgen is installed
+  package:
+    name: uuid
+    state: present
+  when: ansible_os_family == 'RedHat'
+
+- name: See if we have a netdata installed
+  stat:
+    path: /usr/sbin/netdata
+  register: netdata_sbin_present
+
+- debug:
+    msg: "We appear to have netdata already installed, cancelling to avoid any more bother..."
+  when: netdata_sbin_present.stat.exists == true

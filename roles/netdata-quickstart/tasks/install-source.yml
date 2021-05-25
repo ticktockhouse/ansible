@@ -1,0 +1,19 @@
+- name: Download the installation script
+  get_url:
+    url: https://my-netdata.io/kickstart.sh
+    dest: ~/kickstart.sh
+    mode: +x
+  when:
+    - netdata_sbin_present.stat.exists == false
+    # Looks like I meant to add some more here
+
+
+- name: Install Netdata
+  command: ~/kickstart.sh --dont-wait
+  when: netdata_sbin_present.stat.exists == false
+
+- name: Cleanup installation script
+  file:
+    path: ~/kickstart.sh
+    state: absent
+  when: netdata_sbin_present.stat.exists == false

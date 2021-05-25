@@ -1,0 +1,15 @@
+- name: Check if node is already claimed
+  # This check is used to prevent errors in the following task to claim the node to Netdata Cloud.
+  stat:
+    path: /var/lib/netdata/cloud.d/claimed_id
+  register: claimed_result
+
+  # Fail if node is already claimed (for now)
+  
+- name: Reclaim the node with `-id=`
+  shell: netdata-claim.sh -token={{ netdata_claim_token }} -rooms={{ netdata_claim_room }} -url={{ netdata_claim_url }} -id=$(uuidgen)
+  notify: Restart Netdata
+  when: claimed_result.stat.exists == false
+  register: netdata_claim_result
+  tags:
+    - reclaim

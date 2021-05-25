@@ -1,0 +1,14 @@
+# Netdata configuration
+
+[global]
+  hostname = {{ inventory_hostname }}
+  dbengine multihost disk space = {{ netdata_dbengine_multihost_disk_space }}
+
+[web]
+{% if netdata_noweb %}
+	mode = none
+{% endif %}
+{% if netdata_local %}
+  bind_to = localhost
+  allow connections from = localhost
+{% endif %}

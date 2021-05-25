@@ -1,0 +1,26 @@
+netdata_claim_token: "{{ lookup('pipe','pass show netdata/claim-token')}}"
+netdata_claim_rooms: ""
+netdata_claim_url: https://app.netdata.cloud
+
+# Force re-claiming of nodes to Netdata Cloud. Read more:
+# https://learn.netdata.cloud/docs/agent/claim#remove-and-reclaim-a-node
+netdata_reclaim: false
+
+# Set Netdata's metrics retention policy via the disk size for the database
+# engine. Value is in MiB. Read more:
+# https://learn.netdata.cloud/docs/store/change-metrics-storage
+# It's a guess...OK..?!!?!
+netdata_dbengine_multihost_disk_space: 2048
+
+# Set whether to run the Agent web server/dashboard/API, or disable them.
+# Because we're connecting this node to Netdata Cloud and will view dashboards
+# there, we'll set this to `none` to disable the local dashboard. Set to
+# `static-threaded` if you want to keep it running. Read more:
+# https://learn.netdata.cloud/docs/configure/secure-nodes
+netdata_noweb: yes
+
+netdata_package_gpg_url: https://packagecloud.io/netdata/netdata/gpgkey
+netdata_debian_repo: "deb https://packagecloud.io/netdata/netdata/debian/ {{ ansible_distribution_release }} main"
+
+netdata_redhat_repo: "https://packagecloud.io/netdata/netdata/el/{{ ansible_distribution_major_version }}/$basearch"
+netdata_redhat_source_repo: "https://packagecloud.io/netdata/netdata/el/{{ ansible_distribution_major_version }}/SRPMS"

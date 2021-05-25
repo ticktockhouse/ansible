@@ -1,0 +1,17 @@
+- name: Install netdata packagecloud key
+  apt_key:
+    url: "{{ netdata_package_gpg_url }}"
+    state: present
+
+- name: Add the netdata package repo
+  apt_repository:
+    repo: "{{ netdata_debian_repo }}"
+    state: present
+    filename: netdata
+
+- name: Install the package
+  apt:
+    name: netdata
+    state: present
+    update_cache: yes
+    

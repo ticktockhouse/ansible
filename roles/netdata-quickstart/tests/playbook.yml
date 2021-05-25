@@ -1,0 +1,9 @@
+- hosts: all
+  vars:
+    netdata_local: yes 
+    netdata_claim_room: 33df8afa-bf05-4a58-a2bf-6b9403f4d76a
+  roles:
+   - netdata-quickstart
+  # tasks:
+  #   - debug:
+  #       msg: "Hello World!!!"

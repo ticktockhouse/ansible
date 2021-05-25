@@ -1,0 +1,16 @@
+---
+# Tasks file for Netdata
+
+- include_tasks: pre-install.yml
+
+- include_tasks: install-debian-package.yml
+  when: ansible_os_family == 'Debian'
+
+- include_tasks: install-redhat-package.yml
+  when: ansible_os_family == 'RedHat'
+
+- include_tasks: configure.yml
+  tags: configure
+
+- include_tasks: claim.yml
+  tags: claim

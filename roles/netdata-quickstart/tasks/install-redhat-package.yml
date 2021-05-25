@@ -1,0 +1,34 @@
+- name: Install supporting packages
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - yum-utils
+    - pygpgme
+    - epel-release
+
+- name: Add the netdata package repo
+  yum_repository:
+    description: "Netdata package repo"
+    baseurl: "{{ netdata_redhat_repo }}"
+    gpgkey: "{{ netdata_package_gpg_url }}"
+    repo_gpgcheck: yes
+    name: netdata_netdata
+    state: present
+
+- name: Add the netdata sources packages repo
+  yum_repository:
+    description: "Netdata source package repo"
+    baseurl: "{{ netdata_redhat_source_repo }}"
+    gpgkey: "{{ netdata_package_gpg_url }}"
+    repo_gpgcheck: yes
+    name: netdata_netdata-source
+    state: present
+
+- name: Install the package
+  yum:
+    name: netdata
+    disable_gpg_check: yes
+    state: present
+    update_cache: yes
+    
