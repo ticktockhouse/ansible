@@ -1,0 +1,31 @@
+{{ apache_global_vhost_settings }}
+
+{# Set up VirtualHosts #}
+{% for vhost in dev_vhosts %}
+<VirtualHost {{ apache_listen_ip }}:{{ apache_listen_port }}>
+  ServerName dev.{{ vhost }}
+  ServerAlias dev.{{ vhost }}
+  ServerAdmin admin@{{ vhost }}
+  DocumentRoot "{{ apache_vhosts_root }}/{{ vhost }}/httpdocs_dev"
+  <Directory "{{ apache_vhosts_root }}/{{ vhost }}/httpdocs_dev">
+    AllowOverride {{ vhost.allow_override | default(apache_allow_override) }}
+    Options {{ vhost.options | default(apache_options) }}
+{% if apache_vhosts_version == "2.2" %}
+    Order allow,deny
+    Allow from all
+{% else %}
+    Require all granted
+{% endif %}
+  </Directory>
+  Include conf-enabled/letsencrypt.conf
+{% if apache_global_vhost_based_logs is defined %}
+	ErrorLog {{ apache_vhosts_root }}/{{ vhost }}/logs/dev.{{ vhost }}-error.log
+	LogLevel warn
+  CustomLog {{ apache_vhosts_root }}/{{ vhost }}/logs/dev.{{ vhost }}-access.log combined
+{% else %}
+	ErrorLog /var/log/{{ apache_daemon }}/dev.{{ vhost }}-error.log
+	LogLevel warn
+  CustomLog /var/log/{{ apache_daemon }}/dev.{{ vhost }}-access.log combined
+{% endif %}
+</VirtualHost>
+{% endfor %}

@@ -1,0 +1,35 @@
+- debug:
+    msg: "{{ item }}"
+  loop:
+    - "{{ apache_letsencrypt_conf_location }}"
+    - "{{ apache_letsencrypt_wellknown_location }}"
+
+- pause:
+
+- name: Configure letsencrypt [1]
+  file:
+    state: directory
+    path: "{{ item }}"
+    owner: root
+    group: root
+    mode: 0755
+  loop:
+    - "{{ apache_letsencrypt_wellknown_location }}"
+
+- name: Configure letsencrypt [2]
+  template:
+    src: letsencrypt.conf.j2
+    dest: "{{ apache_letsencrypt_conf_location }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart apache
+
+- name: Enable letsencrypt config
+  shell: "a2enconf letsencrypt"
+  notify: restart apache
+
+- name: Reload apache2 to enable conf
+  systemd:
+    name: apache2
+    state: reloaded

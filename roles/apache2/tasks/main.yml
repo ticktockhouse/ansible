@@ -2,6 +2,7 @@
 # Include variables and define needed variables.
 - name: Include OS-specific variables.
   include_vars: "{{ ansible_os_family }}.yml"
+  tags: netdata
 
 - name: Include variables for Amazon Linux.
   include_vars: "AmazonLinux.yml"
@@ -36,9 +37,33 @@
   include_vars: apache-24.yml
   when: "apache_version.split('.')[1] == '4'"
 
+- name: Configure letsencrypt
+  include_tasks: letsencrypt.yml
+  when: apache_letsencrypt is defined and apache_letsencrypt
+  tags: letsencrypt
+
 # Configure Apache.
 - name: Configure Apache.
   include_tasks: "configure-{{ ansible_os_family }}.yml"
+
+- name: Add server status config
+  template:
+    src: status.conf.j2
+    dest: "{{ apache_conf_path }}/status.conf"
+    owner: root  
+    group: root  
+    mode: 0644
+  when: netdata_apache is defined and netdata_apache
+  tags: netdata
+  notify: restart apache
+
+- name: Add local vhost
+  template:
+    src: localhost.conf.j2
+    dest: "{{ apache_conf_path }}/localhost.conf"
+    owner: root  
+    group: root  
+    mode: 0644
 
 - name: Create vhosts base directory
   file:

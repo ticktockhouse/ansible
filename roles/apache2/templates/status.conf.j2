@@ -1,0 +1,8 @@
+<IfModule mod_status.c>
+  ExtendedStatus On
+  <Location /{{ apache_status_path }}>
+      SetHandler server-status
+      Require all denied
+      Require local
+  </Location>
+</IfModule>

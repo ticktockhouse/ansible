@@ -1,0 +1,6 @@
+Alias /.well-known/acme-challenge/ "{{ apache_letsencrypt_wellknown_location }}/.well-known/acme-challenge"
+<Directory "{{ apache_letsencrypt_wellknown_location }}/">
+    AllowOverride None
+    Options MultiViews Indexes SymLinksIfOwnerMatch IncludesNoExec
+    Require method GET POST OPTIONS
+</Directory>

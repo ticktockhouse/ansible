@@ -12,3 +12,6 @@ __apache_packages:
 apache_ports_configuration_items:
   - regexp: "^Listen "
     line: "Listen {{ apache_listen_port }}"
+
+apache_letsencrypt_conf_location: /etc/{{ apache_service }}/conf-available/letsencrypt.conf
+apache_letsencrypt_wellknown_location: /var/www/letsencrypt
