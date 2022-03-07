@@ -4,6 +4,12 @@
   hostname = {{ inventory_hostname }}
   dbengine multihost disk space = {{ netdata_dbengine_multihost_disk_space }}
 
+  stock config directory = {{ netdata_config_dir }} 
+ 
+  # some defaults to run netdata with least priority
+  process scheduling policy = idle
+  OOM score = 1000
+
 [web]
 {% if netdata_noweb %}
 	mode = none
@@ -12,3 +18,6 @@
   bind_to = localhost
   allow connections from = localhost
 {% endif %}
+
+[health]
+    stock health configuration directory = {{ netdata_health_config_dir }}

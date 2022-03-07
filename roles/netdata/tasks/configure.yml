@@ -1,5 +1,6 @@
-- template:
-    src: ../templates/netdata.conf.j2
+- name: Template the netdata PHP-FPM config file
+  template:
+    src: netdata.conf.j2
     dest: /etc/netdata/netdata.conf
     owner: root
     group: root
@@ -7,3 +8,48 @@
     backup: yes
   notify: Restart Netdata
   tags: configure
+
+- name: Template the netdata PHP-FPM config file
+  template:
+    src: phpfpm.conf.j2
+    dest: /etc/netdata/python.d/phpfpm.conf
+    owner: root
+    group: root
+    mode: u=wrx,g=rx,o=r,+x
+    backup: yes
+  notify: Restart Netdata
+  tags: configure
+  when: php_fpm_status is defined and php_fpm_status
+
+- name: Template the netdata mysql config file
+  template:
+    src: mysql.conf.j2
+    dest: /etc/netdata/python.d/mysql.conf
+    owner: root
+    group: root
+    mode: u=wrx,g=rx,o=r,+x
+    backup: yes
+  notify: Restart Netdata
+  tags: configure
+  when: netdata_mysql is defined and netdata_mysql
+
+- name: Add the read-only netdata mysql user
+  mysql_user:
+    name: netdata
+    host: localhost
+    priv: "*.*:REPLICATION\ CLIENT,USAGE"
+  tags:
+    - configure
+  when: netdata_mysql is defined and netdata_mysql
+
+- name: Template the netdata nginx config file
+  template:
+    src: nginx.conf.j2
+    dest: /etc/netdata/python.d/nginx.conf
+    owner: root
+    group: root
+    mode: u=wrx,g=rx,o=r,+x
+    backup: yes
+  notify: Restart Netdata
+  tags: configure
+  when: netdata_mysql is defined and netdata_mysql

@@ -1,6 +1,8 @@
 netdata_claim_token: "{{ lookup('pipe','pass show netdata/claim-token')}}"
 netdata_claim_rooms: ""
 netdata_claim_url: https://app.netdata.cloud
+netdata_config_dir: /etc/netdata/conf.d
+netdata_health_config_dir: /etc/netdata/conf.d/health.d
 
 # Force re-claiming of nodes to Netdata Cloud. Read more:
 # https://learn.netdata.cloud/docs/agent/claim#remove-and-reclaim-a-node
@@ -20,7 +22,9 @@ netdata_dbengine_multihost_disk_space: 2048
 netdata_noweb: yes
 
 netdata_package_gpg_url: https://packagecloud.io/netdata/netdata/gpgkey
-netdata_debian_repo: "deb https://packagecloud.io/netdata/netdata/debian/ {{ ansible_distribution_release }} main"
+netdata_debian_repo: "deb https://packagecloud.io/netdata/netdata/{{ ansible_distribution | lower }}/ {{ ansible_distribution_release }} main"
 
 netdata_redhat_repo: "https://packagecloud.io/netdata/netdata/el/{{ ansible_distribution_major_version }}/$basearch"
 netdata_redhat_source_repo: "https://packagecloud.io/netdata/netdata/el/{{ ansible_distribution_major_version }}/SRPMS"
+
+netdata_local: no

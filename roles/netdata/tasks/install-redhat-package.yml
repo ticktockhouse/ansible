@@ -7,23 +7,25 @@
     - pygpgme
     - epel-release
 
-- name: Add the netdata package repo
-  yum_repository:
-    description: "Netdata package repo"
-    baseurl: "{{ netdata_redhat_repo }}"
-    gpgkey: "{{ netdata_package_gpg_url }}"
-    repo_gpgcheck: yes
-    name: netdata_netdata
-    state: present
 
-- name: Add the netdata sources packages repo
-  yum_repository:
-    description: "Netdata source package repo"
-    baseurl: "{{ netdata_redhat_source_repo }}"
-    gpgkey: "{{ netdata_package_gpg_url }}"
-    repo_gpgcheck: yes
-    name: netdata_netdata-source
-    state: present
+# Looks like this is in EPEL now...
+# - name: Add the netdata package repo
+#   yum_repository:
+#     description: "Netdata package repo"
+#     baseurl: "{{ netdata_redhat_repo }}"
+#     gpgkey: "{{ netdata_package_gpg_url }}"
+#     repo_gpgcheck: yes
+#     name: netdata_netdata
+#     state: present
+
+# - name: Add the netdata sources packages repo
+#   yum_repository:
+#     description: "Netdata source package repo"
+#     baseurl: "{{ netdata_redhat_source_repo }}"
+#     gpgkey: "{{ netdata_package_gpg_url }}"
+#     repo_gpgcheck: yes
+#     name: netdata_netdata-source
+#     state: present
 
 - name: Install the package
   yum:
@@ -31,4 +33,24 @@
     disable_gpg_check: yes
     state: present
     update_cache: yes
+
+- name: Create necessary conf dir that the RPM seems to miss...
+  file:
+    path: /usr/lib64/netdata/conf.d
+    state: directory
+    recurse: yes
+    owner: root
+    group: root
+    mode: 0755
+
+# app.netdata.cloud is protected by Letsencrypt, which recently updated its Root CA, I believe...
+- name: Ensure ca-certificates is updated
+  yum:
+    name: ca-certificates
+    state: latest
+
+- name: Ensure service is started
+  service:
+    name: netdata
+    state: started
     

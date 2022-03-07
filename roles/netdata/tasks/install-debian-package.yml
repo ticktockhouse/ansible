@@ -14,4 +14,18 @@
     name: netdata
     state: present
     update_cache: yes
-    
+
+- name: Create the necessary dir
+  file:
+    state: directory
+    recurse: yes
+    path: /etc/netdata/conf.d 
+
+- name: Add the netdata.conf pointer file
+  template:
+    src: debian-netdata.conf.j2
+    dest: /etc/netdata/conf.d/netdata-debian.conf
+    owner: root
+    group: root
+    mode: 0644
+
