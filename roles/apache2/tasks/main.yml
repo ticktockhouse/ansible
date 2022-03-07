@@ -37,10 +37,10 @@
   include_vars: apache-24.yml
   when: "apache_version.split('.')[1] == '4'"
 
-- name: Configure letsencrypt
-  include_tasks: letsencrypt.yml
-  when: apache_letsencrypt is defined and apache_letsencrypt
-  tags: letsencrypt
+# - name: Configure letsencrypt
+#   include_tasks: letsencrypt.yml
+#   when: apache_letsencrypt is defined and apache_letsencrypt
+#   tags: letsencrypt
 
 # Configure Apache.
 - name: Configure Apache.

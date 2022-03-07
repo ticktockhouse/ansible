@@ -59,22 +59,42 @@
     - apache_create_vhosts
     - new_vhosts is defined and new_vhosts
 
+- name: Add New New vhosts configs
+  template: 
+    src: new-new-vhost.conf.j2
+    dest: "{{ apache_conf_path }}/sites-available/{{ item.domain }}.conf"
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  notify: restart apache
+  when:
+    - apache_create_vhosts
+  loop: "{{ new_new_vhosts }}"
+
+- pause:
+
+# - name: Enable sites
+#   shell: a2ensite {{ item.domain }}
+#   loop: "{{ new_new_vhosts }}"
+#   notify: restart apache
+
 - set_fact:
     dev_prefix: "dev."
 
 - set_fact:
     dev_vhosts: "{{ new_vhosts | selectattr('dev', 'defined') | map(attribute='domain') }}"
 
-- name: Add dev sites
-  template:
-    src: "{{ apache_dev_vhosts_template }}"
-    dest: "{{ apache_conf_path }}/sites-available/{{ apache_dev_vhosts_filename }}"
-    owner: root
-    group: root
-    mode: 0644
-    backup: yes
-  notify: restart apache
-  tags: dev-sites
+# - name: Add dev sites
+#   template:
+#     src: "{{ apache_dev_vhosts_template }}"
+#     dest: "{{ apache_conf_path }}/sites-available/{{ apache_dev_vhosts_filename }}"
+#     owner: root
+#     group: root
+#     mode: 0644
+#     backup: yes
+#   notify: restart apache
+#   tags: dev-sites
 
 - name: Add vhost symlink in sites-enabled.
   file:
