@@ -14,7 +14,7 @@ mkdir -p {{ restic_cache_dir }}
 touch {{ restic_excludes_file }}
 
 {% for dir in restic_backup_dirs %}
-{{ restic_bindir }}/restic backup --verbose {{ dir }} --exclude-file={{ restic_excludes_file }} --cache-dir {{ restic_cache_dir }}
+{{ restic_bindir }}/restic backup --verbose {{ dir }} --exclude-file={{ restic_excludes_file }} --cache-dir {{ restic_cache_dir }} --exclude-if-present norestic.txt
 {% endfor %}
 
 {# boilerplate policy, please parameterise #}
