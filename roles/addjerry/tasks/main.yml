@@ -52,15 +52,20 @@
     - restart sshd
 
 - debug:
-    var: ssh_key_data
+    var: login_users
+  tags: addsshkeys
 
 - name: Add authorized keys
   authorized_key:
     user: "{{ item.name }}"
-    key: "{{ lookup('file', '{{ playbook_dir }}/files/'+ item.name + '.key.pub') }}"
+    key: "{{ lookup('file', 'files/' + item.name + '.key.pub', errors='warn') }}"
   with_items: "{{ login_users }}"
+  tags: addsshkeys
 
 - include_tasks: sudo.yml
 
 - include_tasks: disable.yml
   when: secure_ssh is defined and secure_ssh
+
+- pause:
+    prompt: "Probably best to abort here and continue as the 'jerry' user"
