@@ -30,6 +30,15 @@
     mode: 0644
   notify: restart php-fpm
 
+
+- name: Set upload_max_filesize
+  lineinfile:
+    dest: /etc/php.ini
+    regexp: "^upload_max_filesize"
+    line: "upload_max_filesize = {{ php_upload_max_filesize }}"
+    state: present
+  notify: restart php-fpm
+
 - name: Enable php-fpm to start on boot
   service:
     name: php-fpm

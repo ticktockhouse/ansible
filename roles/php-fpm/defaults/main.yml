@@ -4,3 +4,8 @@ php_fpm_centos_packages:
   - mod_ssl
 php_fpm_socket: /var/run/php-fpm/default.sock
 php_fpm_config: socket
+
+pm_max_children: "50"
+pm_start_servers: "5"
+pm_min_spare_servers: "5"
+pm_max_spare_servers: "35"
