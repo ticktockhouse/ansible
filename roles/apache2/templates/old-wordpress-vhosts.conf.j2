@@ -32,6 +32,7 @@
   SSLCertificateFile /etc/letsencrypt/live/{{ vhost.domain }}/cert.pem
   SSLCertificateKeyFile /etc/letsencrypt/live/{{ vhost.domain }}/privkey.pem
   SSLCertificateChainFile /etc/letsencrypt/live/{{ vhost.domain }}/chain.pem
+  Alias /.well-known/acme-challenge /var/lib/dehydrated//acme-challenges/.well-known/acme-challenge
 {% else %}
   SSLCertificateFile {{ vhost.certificate_file }}
   SSLCertificateKeyFile {{ vhost.certificate_key_file }}
@@ -130,7 +131,7 @@ Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
     </IfModule>
 
     <FilesMatch ".+\.ph(ar|p|tml)$">
-        SetHandler "proxy:unix:/run/php/php-fpm.{{ vhost.slug }}.sock|fcgi://localhost"
+        SetHandler "proxy:unix:/var/run/php-fpm/php-fpm.sock|fcgi://localhost"
     </FilesMatch>
     <FilesMatch ".+\.phps$">
         # Deny access to raw php sources by default

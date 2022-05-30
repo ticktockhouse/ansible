@@ -16,7 +16,7 @@ touch /root/restic-excludes.txt;
 
 
 {% for dir in restic_backup_dirs %}
-{{ restic_bindir }}/restic backup --verbose {{ dir }} --exclude-file={{ restic_excludes_file }} --cache-dir {{ restic_cache_dir }}
+{{ restic_bindir }}/restic backup --verbose {{ dir }} --exclude-file={{ restic_excludes_file }} --cache-dir {{ restic_cache_dir }} --exclude-if-present norestic.txt
 {% endfor %}
 echo "Backup job finished at $(date)" ) \
   | mail -s "Backup job finished at $(date)" $EMAIL_TO

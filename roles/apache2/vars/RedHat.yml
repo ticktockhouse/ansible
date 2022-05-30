@@ -21,3 +21,5 @@ __apache_packages:
 
 htpasswd_user: apache
 htpasswd_group: apache
+
+php_fpm_socket: /var/run/php-fpm/php-fpm.sock

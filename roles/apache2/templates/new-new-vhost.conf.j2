@@ -2,7 +2,7 @@
 {% if item.dev is defined and item.dev %}
 # dev site
 <VirtualHost {{ apache_listen_ip }}:80>
-    ServerAdmin {{ server_admin }}
+    ServerAdmin {{ apache_server_admin }}
     ServerName dev.{{ item.domain }}
     {# ServerAlias www.{{ item.domain }} #}
     {% if apache_global_vhost_based_logs is defined %}
@@ -21,7 +21,7 @@
 </VirtualHost>
 <IfFile {{dehydrated_basedir}}/certs/{{ item.domain }}/cert.pem>
 <VirtualHost {{ apache_listen_ip }}:443>
-    ServerAdmin {{ server_admin }}
+    ServerAdmin {{ apache_server_admin }}
     ServerName dev.{{ item.domain }}
     {# ServerAlias www.{{ item.domain }} #}
     DocumentRoot "{{ apache_vhosts_root }}/{{ item.domain }}/httpdocs_dev"
@@ -85,7 +85,7 @@
 {% if item.live is defined and item.live %}
 # dev site
 <VirtualHost {{ apache_listen_ip }}:80>
-    ServerAdmin {{ server_admin }}
+    ServerAdmin {{ apache_server_admin }}
     ServerName {{ item.domain }}
     ServerAlias www.{{ item.domain }}
     {# ServerAlias www.{{ item.domain }} #}
@@ -105,7 +105,7 @@
 </VirtualHost>
 <IfFile {{dehydrated_basedir}}/certs/{{ item.domain }}/cert.pem>
 <VirtualHost {{ apache_listen_ip }}:443>
-    ServerAdmin {{ server_admin }}
+    ServerAdmin {{ apache_server_admin }}
     ServerName {{ item.domain }}
     ServerAlias www.{{ item.domain }}
     DocumentRoot "{{ apache_vhosts_root }}/{{ item.domain }}/httpdocs"

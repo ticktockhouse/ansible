@@ -43,7 +43,7 @@
   notify: restart apache
   when: apache_create_vhosts
 
-- name: Add apache vhosts configuration [Wordpress]
+- name: Add apache vhosts configuration [Wordpress] [Old]
   template:
     src: "{{ apache_wordpress_vhosts_template }}"
     dest: "{{ apache_conf_path }}/sites-available/{{ apache_wordpress_vhosts_filename }}"
@@ -55,6 +55,21 @@
   when:
     - apache_create_vhosts
     - wordpress_vhosts is defined and wordpress_vhosts
+  loop: "{{ wordpress_vhosts }}"
+
+- name: Add apache vhosts configuration [Wordpress] [New]
+  template:
+    src: "{{ apache_new_wordpress_centos_7_vhosts_template }}"
+    dest: "{{ apache_conf_path }}/sites-available/{{ item.domain }}.conf"
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  notify: restart apache
+  when:
+    - apache_create_vhosts
+    - wordpress_new_vhosts is defined and wordpress_new_vhosts
+  loop: "{{ wordpress_new_vhosts }}"
 
 - name: Add apache vhosts configuration [New]
   template:
@@ -92,6 +107,17 @@
     - new_vhosts is defined and new_vhosts
   with_items:
     - "{{ apache_new_vhosts_filename }}"
+
+- name: Add New Wordpress vhost symlinks in sites-enabled
+  file:
+    src: "{{ apache_conf_path }}/sites-available/{{ item.domain }}.conf"
+    dest: "{{ apache_conf_path }}/sites-enabled/{{ item.domain }}.conf"
+    state: link
+  notify: restart apache
+  when:
+    - apache_create_vhosts
+    - wordpress_new_vhosts is defined and wordpress_new_vhosts
+  loop: "{{ wordpress_new_vhosts }}"
 
 - name: Configure mod_deflate
   template:
