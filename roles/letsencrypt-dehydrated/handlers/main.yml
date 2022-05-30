@@ -1,0 +1,5 @@
+- name: dehydrated register
+  command: "{{ dehydrated_binary }} --register --accept-terms"
+
+- name: dehydrated cron
+  command: "{{ dehydrated_binary }} --cron"

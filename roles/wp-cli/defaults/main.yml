@@ -1,0 +1,4 @@
+wp_cli_github_account: wp-cli
+wp_cli_github_repo: wp-cli
+wp_cli_package: php-cli
+wp_cli_phar_dest: /usr/local/bin/wp

@@ -1,0 +1,26 @@
+- name: Copy privkey into place
+  copy:
+    src: files/tls/{{ item }}/{{ item }}.key
+    dest: /etc/pki/tls/private/{{ item }}.key
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+
+- name: Copy cert chain into place
+  copy:
+    src: files/tls/{{ item }}/{{ item }}-chain.crt
+    dest: /etc/pki/tls/certs/{{ item }}-chain.crt
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+
+- name: Copy cert into place
+  copy:
+    src: files/tls/{{ item }}/{{ item }}.crt
+    dest: /etc/pki/tls/certs/{{ item }}.crt
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes

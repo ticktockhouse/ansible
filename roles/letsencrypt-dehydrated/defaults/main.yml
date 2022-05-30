@@ -1,0 +1,7 @@
+dehydrated_basedir: "/var/lib/dehydrated/"
+dehydrated_binary: "/usr/bin/dehydrated"
+dehydrated_certs_dir: "{{ dehydrated_config_dir }}/certs"
+dehydrated_config_dir: "/etc/dehydrated"
+dehydrated_location: "/etc/letsencrypt"
+dehydrated_wellknown_dir: "{{ dehydrated_basedir }}/acme-challenges"
+dehydrated_staging: no

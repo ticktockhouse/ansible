@@ -1,0 +1,18 @@
+#############################################################
+# This is the main config file for dehydrated               #
+#                                                           #
+# This is the default configuration for the Debian package. #
+# To see a more comprehensive example, see                  #
+# /usr/share/doc/dehydrated/examples/config                 #
+#                                                           #
+# For details please read:                                  #
+# /usr/share/doc/dehydrated/README.Debian                   #
+#############################################################
+
+CONFIG_D={{ dehydrated_config_dir }}/conf.d
+BASEDIR={{ dehydrated_basedir }}
+WELLKNOWN="${BASEDIR}/acme-challenges"
+DOMAINS_TXT="{{ dehydrated_config_dir }}/domains.txt"
+{% if dehydrated_staging is defined and dehydrated_staging %}
+CA="https://acme-staging-v02.api.letsencrypt.org/directory"
+{% endif %}

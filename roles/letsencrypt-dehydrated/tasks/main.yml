@@ -1,0 +1,45 @@
+- name: Install dehydrated-apache2
+  apt:
+    name: dehydrated-apache2
+    state: present
+
+- name: Ensure config directory is present.
+  file:
+    path: "{{ dehydrated_config_dir }}"
+    state: directory
+    mode: "0711"
+
+- name: Ensure wellknown directory is present.
+  file:
+    path: "{{ dehydrated_wellknown_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Ensure certs directory is present.
+  file:
+    path: "{{ dehydrated_certs_dir }}"
+    state: directory
+    mode: "0700"
+
+- name: Ensure domains.txt is present.
+  template:
+    src: domains.txt.j2
+    dest: "{{ dehydrated_config_dir }}/domains.txt"
+
+- name: Ensure config is present.
+  template:
+    src: config.j2
+    dest: "{{ dehydrated_config_dir }}/config"
+    owner: root
+    group: root
+    mode: 0644
+  notify: dehydrated register
+
+# TODO: Kludge
+- name: Move newer script into place
+  copy:
+    src: dehydrated-script
+    dest: /usr/bin/dehydrated
+    owner: root
+    group: root
+    mode: 0744

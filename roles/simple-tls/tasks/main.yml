@@ -1,0 +1,2 @@
+- include_tasks: cert-loop.yml
+  with_items: "{{ simple_tls_sites }}"

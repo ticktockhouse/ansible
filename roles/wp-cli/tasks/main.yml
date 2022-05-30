@@ -1,0 +1,29 @@
+- name: Ensure php-cli is installed
+  package:
+    name: "{{ wp_cli_package }}"
+    state: present
+
+- name: Get latest release version
+  shell: curl -sL api.github.com/repos/wp-cli/wp-cli/releases/latest | jq -r '.tag_name' | sed -e '1s/^.//'
+  delegate_to: localhost
+  register: latest_version
+  become: no
+
+- name: Get the sha512 hash
+  uri:
+    url: "https://github.com/{{ wp_cli_github_account }}/{{ wp_cli_github_repo }}/releases/download/v{{ latest_version.stdout }}/wp-cli-{{ latest_version.stdout }}.phar.sha512"
+    return_content: yes
+  register: sha512sum
+
+- name: Get wp-cli phar file
+  get_url:
+    url: "https://github.com/{{ wp_cli_github_account }}/{{ wp_cli_github_repo }}/releases/download/v{{ latest_version.stdout }}/wp-cli-{{ latest_version.stdout }}.phar"
+    dest: "{{ wp_cli_phar_dest }}"
+    mode: 0755
+    checksum: "sha512:{{ sha512sum.content }}"
+
+# - name: Symlink php executable to fix running
+#   file:
+#     path: /bin/php
+#     state: link
+#     src: /bin/php72
