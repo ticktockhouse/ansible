@@ -1,6 +1,6 @@
 mariadb_packages:
   - mariadb-server
-  - python-pymysql
+  - python3-mysqldb
 
 mariadb_config_network: /etc/mysql/mariadb.conf.d/network.cnf
 mariadb_config_server: /etc/mysql/mariadb.conf.d/50-server.cnf
