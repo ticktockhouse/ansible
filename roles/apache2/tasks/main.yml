@@ -80,7 +80,6 @@
   loop: "{{ new_vhosts }}"
   when: new_vhosts is defined and new_vhosts
 
-
 - name: Create vhosts directories
   file:
     state: directory
@@ -90,3 +89,20 @@
     mode: 0755
   loop: "{{ new_vhosts }}"
   when: new_vhosts is defined and new_vhosts
+
+- name: Create vhost users
+  user:
+    name: "{{ item.slug }}"
+    state: present
+  loop: "{{ wordpress_vhosts }}"
+  when: wordpress_vhosts is defined and wordpress_vhosts
+
+- name: Create vhosts directories
+  file:
+    state: directory
+    path: "{{ apache_vhosts_root }}/{{ item.domain }}/httpdocs"
+    owner: "{{ item.slug }}"
+    group: "{{ item.slug }}"
+    mode: 0755
+  loop: "{{ wordpress_vhosts }}"
+  when: wordpress_vhosts is defined and wordpress_vhosts

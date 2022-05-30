@@ -1,49 +1,58 @@
-{{ apache_global_vhost_settings }}
-
 {# Set up VirtualHosts #}
-{% for vhost in wordpress_vhosts %}
-{% if vhost.tls is defined %}
-<VirtualHost {{ apache_listen_ip }}:{{ apache_listen_port }}>
-  ServerName {{ vhost.domain }}
-  ServerAlias www.{{ vhost.domain }}
-  Documentroot "{{ apache_vhosts_root }}/{{ vhost.domain }}/httpdocs"
-  Redirect / https://{{ vhost.domain }}/
+{% if 'dev' == env  %}
+{% if item.dev is defined and item.dev %}
+<VirtualHost {{ apache_listen_ip }}:80>
+  ServerAdmin {{ apache_server_admin }}
+  ServerName dev.{{ item.domain }}
+  {% if apache_global_vhost_based_logs is defined %}
+  ErrorLog {{ apache_vhosts_root }}/{{ item.domain }}/logs/dev.{{ item.domain }}-error.log
+  LogLevel warn
+  CustomLog {{ apache_vhosts_root }}/{{ item.domain }}/logs/dev.{{ item.domain }}-access.log combined
+  {% else %}
+  ErrorLog /var/log/{{ apache_daemon }}/dev.{{ item.domain }}-error.log
+  LogLevel warn
+  CustomLog /var/log/{{ apache_daemon }}/dev.{{ item.domain }}-access.log combined
+  {% endif %}
+  DocumentRoot "{{ apache_vhosts_root }}/{{ item.domain }}/httpdocs"
+{% if item.letsencrypt is defined %}
+  Alias /.well-known/acme-challenge /var/lib/dehydrated//acme-challenges/.well-known/acme-challenge
+{% endif%}
+  {% if item.tls is defined %}
+  Redirect / https://dev.{{ item.domain }}/
+{% endif%}
 </VirtualHost>
-{% endif %}
-
-{% if vhost.tls is defined %}
-<VirtualHost {{ apache_listen_ip }}:{{ apache_listen_port_ssl }}>
-{% else %}
-<VirtualHost {{ apache_listen_ip }}:{{ apache_listen_port }}>
-{% endif %}
-  ServerName {{ vhost.domain }}
-  ServerAlias www.{{ vhost.domain }}
-  ServerAdmin admin@{{ vhost.domain }}
-  DocumentRoot "{{ apache_vhosts_root }}/{{ vhost.domain }}/httpdocs"
-{% if vhost.tls is defined %}
+{% if item.tls is defined and item.tls %}
+<VirtualHost {{ apache_listen_ip }}:443>
+  ServerAdmin {{ apache_server_admin }}
+  ServerName dev.{{ item.domain }}
+  DocumentRoot "{{ apache_vhosts_root }}/{{ item.domain }}/httpdocs"
+  {% if apache_global_vhost_based_logs is defined %}
+  ErrorLog {{ apache_vhosts_root }}/{{ item.domain }}/logs/dev.{{ item.domain }}-error.log
+  LogLevel warn
+  CustomLog {{ apache_vhosts_root }}/{{ item.domain }}/logs/dev.{{ item.domain }}-access.log combined
+  {% else %}
+  ErrorLog /var/log/{{ apache_daemon }}/dev.{{ item.domain }}-error.log
+  LogLevel warn
+  CustomLog /var/log/{{ apache_daemon }}/dev.{{ item.domain }}-access.log combined
+  {% endif %}
   SSLEngine on
   SSLCipherSuite {{ apache_ssl_cipher_suite }}
   SSLProtocol {{ apache_ssl_protocol }}
   SSLHonorCipherOrder On
-{% if apache_vhosts_version == "2.4" %}
+  {% if apache_vhosts_version == "2.4" %}
   SSLCompression off
-{% endif %}
+  {% endif %}
+  {% if item.letsencrypt is defined and item.letsencrypt %}
+  SSLCertificateFile    {{ dehydrated_basedir }}/certs/{{ item.domain }}/cert.pem
+  SSLCertificateKeyFile {{ dehydrated_basedir }}/certs/{{ item.domain }}/privkey.pem
+  SSLCertificateChainFile {{ dehydrated_basedir }}/certs/{{ item.domain }}/chain.pem
 {% if vhost.letsencrypt is defined %}
-  SSLCertificateFile /etc/letsencrypt/live/{{ vhost.domain }}/cert.pem
-  SSLCertificateKeyFile /etc/letsencrypt/live/{{ vhost.domain }}/privkey.pem
-  SSLCertificateChainFile /etc/letsencrypt/live/{{ vhost.domain }}/chain.pem
   Alias /.well-known/acme-challenge /var/lib/dehydrated//acme-challenges/.well-known/acme-challenge
-{% else %}
-  SSLCertificateFile {{ vhost.certificate_file }}
-  SSLCertificateKeyFile {{ vhost.certificate_key_file }}
-{% endif %}
-{% if vhost.certificate_chain_file is defined %}
-  SSLCertificateChainFile {{ vhost.certificate_chain_file }}
-{% endif %}
-{% endif %}
-  <Directory "{{ apache_vhosts_root }}/{{ vhost.domain }}/httpdocs">
-    AllowOverride {{ vhost.allow_override | default(apache_allow_override) }}
-    Options {{ vhost.options | default(apache_options) }}
+{% endif%}
+  {% endif %}
+  <Directory "{{ apache_vhosts_root }}/{{ item.domain }}/httpdocs">
+    AllowOverride {{ item.allow_override | default(apache_allow_override) }}
+    Options {{ item.options | default(apache_options) }}
 {% if apache_vhosts_version == "2.2" %}
     Order allow,deny
     Allow from all
@@ -51,7 +60,7 @@
     Require all granted
 {% endif %}
     RewriteEngine On
-{% if vhost.multisite is defined %}
+{% if item.multisite is defined %}
     RewriteBase /
     RewriteRule ^index\.php$ - [L]
 # add a trailing slash to /wp-admin
@@ -72,13 +81,13 @@
     RewriteRule . /index.php [L]
 {% endif %}
   </Directory>
-{% if vhost.subdirs is defined %}
-{% for subdir in vhost.subdirs %}
+{% if item.subdirs is defined %}
+{% for subdir in item.subdirs %}
 Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
 
 <Directory {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs>
-    AllowOverride {{ vhost.allow_override | default(apache_allow_override) }}
-    Options {{ vhost.options | default(apache_options) }}
+    AllowOverride {{ item.allow_override | default(apache_allow_override) }}
+    Options {{ item.options | default(apache_options) }}
 {% if apache_vhosts_version == "2.2" %}
     Order allow,deny
     Allow from all
@@ -94,15 +103,15 @@ Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
 {% endfor %}
 {% endif %}
 {% if apache_global_vhost_based_logs is defined %}
-	ErrorLog {{ apache_vhosts_root }}/{{ vhost.domain }}/logs/{{ vhost.domain }}-error.log
+	ErrorLog {{ apache_vhosts_root }}/{{ item.domain }}/logs/{{ item.domain }}-error.log
 	LogLevel warn
-  CustomLog {{ apache_vhosts_root }}/{{ vhost.domain }}/logs/{{ vhost.domain }}-access.log combined
+  CustomLog {{ apache_vhosts_root }}/{{ item.domain }}/logs/{{ item.domain }}-access.log combined
 {% else %}
-	ErrorLog /var/log/{{ apache_daemon }}/{{ vhost.domain }}-error.log
+	ErrorLog /var/log/{{ apache_daemon }}/{{ item.domain }}-error.log
 	LogLevel warn
-  CustomLog /var/log/{{ apache_daemon }}/{{ vhost.domain }}-access.log combined
+  CustomLog /var/log/{{ apache_daemon }}/{{ item.domain }}-access.log combined
 {% endif %}
-{% if vhost.php_fpm is defined %}
+{% if item.php_fpm is defined %}
 <IfModule proxy_fcgi_module>
     # Enable http authorization headers
     <IfModule setenvif_module>
@@ -110,7 +119,7 @@ Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
     </IfModule>
 
     <FilesMatch ".+\.ph(ar|p|tml)$">
-        SetHandler "proxy:unix:/run/php/php-fpm.{{ vhost.slug }}.sock|fcgi://localhost"
+        SetHandler "proxy:unix:/run/php/php-fpm.{{ item.slug }}.sock|fcgi://localhost"
     </FilesMatch>
     <FilesMatch ".+\.phps$">
         # Deny access to raw php sources by default
@@ -131,7 +140,7 @@ Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
     </IfModule>
 
     <FilesMatch ".+\.ph(ar|p|tml)$">
-        SetHandler "proxy:unix:/var/run/php-fpm/php-fpm.sock|fcgi://localhost"
+        SetHandler "proxy:unix:/run/php/php-fpm.{{ item.slug }}.sock|fcgi://localhost"
     </FilesMatch>
     <FilesMatch ".+\.phps$">
         # Deny access to raw php sources by default
@@ -147,4 +156,6 @@ Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
 
 {% endif %}
 </VirtualHost>
-{% endfor %}
+{% endif %}
+{% endif %}
+{% endif %}

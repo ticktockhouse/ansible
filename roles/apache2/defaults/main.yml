@@ -1,5 +1,5 @@
 ---
-wordpress_vhosts: ""
+# wordpress_vhosts: ""
 # new_vhosts: ""
 
 apache_allow_override: "All"
@@ -37,6 +37,7 @@ apache_remove_default_vhost: false
 # Set apache state when configuration changes are made. Recommended values:
 # `restarted` or `reloaded`
 apache_restart_state: restarted
+apache_server_admin: "root@localhost"
 apache_sites_dirs:
   - sites-available
   - sites-enabled
@@ -64,6 +65,8 @@ apache_vhosts_ssl: []
 apache_vhosts_template: "vhosts.conf.j2"
 apache_wordpress_vhosts_filename: "wordpress-vhosts.conf"
 apache_wordpress_vhosts_template: "old-wordpress-vhosts.conf.j2"
+apache_new_wordpress_centos_7_vhosts_template: "new-wordpress-vhosts-centos-7.conf.j2"
+apache_new_wordpress_vhosts_template: "new-wordpress-vhosts.conf.j2"
 apache_gzip: no
 
 # TODO - check this

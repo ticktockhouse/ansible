@@ -47,6 +47,20 @@
     - wordpress_vhosts is defined and wordpress_vhosts
   loop: "{{ wordpress_vhosts }}"
 
+- name: Add apache vhosts configuration [Wordpress] [New]
+  template:
+    src: "{{ apache_new_wordpress_vhosts_template }}"
+    dest: "{{ apache_conf_path }}/sites-available/{{ item.domain }}.conf"
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  notify: restart apache
+  when:
+    - apache_create_vhosts
+    - new_wordpress_vhosts is defined and new_wordpress_vhosts
+  loop: "{{ new_wordpress_vhosts }}"
+
 - name: Add apache vhosts configuration [New]
   template:
     src: "{{ apache_new_vhosts_template }}"
@@ -59,7 +73,7 @@
   when:
     - apache_create_vhosts
     - new_vhosts is defined and new_vhosts
-  loop: "{{ new_new_vhosts }}"
+  loop: "{{ new_vhosts }}"
 
 - name: Add New New vhosts configs
   template: 
