@@ -23,10 +23,10 @@ action = {{ service.action }}
 banaction = {{ service.banaction }}
 {% endif %}
 {% if service.bantime is defined %}
-banaction = {{ service.bantime }}
+bantime = {{ service.bantime }}
 {% endif %}
 {% if service.findtime is defined %}
-banaction = {{ service.findtime }}
+findtime = {{ service.findtime }}
 {% endif %}
 {% endfor %}
 {% endif %}
