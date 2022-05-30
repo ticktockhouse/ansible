@@ -33,7 +33,7 @@
   notify: restart apache
   when: apache_create_vhosts
 
-- name: Add apache vhosts configuration [Wordpress]
+- name: Add apache vhosts configuration [Wordpress] [Old]
   template:
     src: "{{ apache_wordpress_vhosts_template }}"
     dest: "{{ apache_conf_path }}/sites-available/{{ apache_wordpress_vhosts_filename }}"

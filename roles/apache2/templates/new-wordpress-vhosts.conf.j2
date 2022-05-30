@@ -1,0 +1,155 @@
+{# Set up VirtualHosts #}
+{% if 'dev' == env  %}
+{% if item.dev is defined and item.dev %}
+<VirtualHost {{ apache_listen_ip }}:80>
+  ServerAdmin {{ apache_server_admin }}
+  ServerName dev.{{ item.domain }}
+  {% if apache_global_vhost_based_logs is defined %}
+  ErrorLog {{ apache_vhosts_root }}/{{ item.domain }}/logs/dev.{{ item.domain }}-error.log
+  LogLevel warn
+  CustomLog {{ apache_vhosts_root }}/{{ item.domain }}/logs/dev.{{ item.domain }}-access.log combined
+  {% else %}
+  ErrorLog /var/log/{{ apache_daemon }}/dev.{{ item.domain }}-error.log
+  LogLevel warn
+  CustomLog /var/log/{{ apache_daemon }}/dev.{{ item.domain }}-access.log combined
+  {% endif %}
+  Alias /.well-known/acme-challenge {{ dehydrated_wellknown_dir }}
+  {% if item.tls is defined %}
+  Redirect / https://dev.{{ item.domain }}/
+  {% elif item.letsencrypt is defined %}
+  Redirect / https://dev.{{ item.domain }}/
+  {% endif %}
+</VirtualHost>
+<IfFile {{dehydrated_basedir}}/certs/{{ item.domain }}/cert.pem>
+<VirtualHost {{ apache_listen_ip }}:443>
+  ServerAdmin {{ apache_server_admin }}
+  ServerName dev.{{ item.domain }}
+  DocumentRoot "{{ apache_vhosts_root }}/{{ item.domain }}/httpdocs"
+  {% if apache_global_vhost_based_logs is defined %}
+  ErrorLog {{ apache_vhosts_root }}/{{ item.domain }}/logs/dev.{{ item.domain }}-error.log
+  LogLevel warn
+  CustomLog {{ apache_vhosts_root }}/{{ item.domain }}/logs/dev.{{ item.domain }}-access.log combined
+  {% else %}
+  ErrorLog /var/log/{{ apache_daemon }}/dev.{{ item.domain }}-error.log
+  LogLevel warn
+  CustomLog /var/log/{{ apache_daemon }}/dev.{{ item.domain }}-access.log combined
+  {% endif %}
+  SSLEngine on
+  SSLCipherSuite {{ apache_ssl_cipher_suite }}
+  SSLProtocol {{ apache_ssl_protocol }}
+  SSLHonorCipherOrder On
+  {% if apache_vhosts_version == "2.4" %}
+  SSLCompression off
+  {% endif %}
+  SSLCertificateFile    {{ dehydrated_basedir }}/certs/{{ item.domain }}/cert.pem
+  SSLCertificateKeyFile {{ dehydrated_basedir }}/certs/{{ item.domain }}/privkey.pem
+  SSLCertificateChainFile {{ dehydrated_basedir }}/certs/{{ item.domain }}/chain.pem
+  Alias /.well-known/acme-challenge {{ dehydrated_wellknown_dir }}
+  <Directory "{{ apache_vhosts_root }}/{{ item.domain }}/httpdocs">
+    AllowOverride {{ item.allow_override | default(apache_allow_override) }}
+    Options {{ item.options | default(apache_options) }}
+{% if apache_vhosts_version == "2.2" %}
+    Order allow,deny
+    Allow from all
+{% else %}
+    Require all granted
+{% endif %}
+    RewriteEngine On
+{% if item.multisite is defined %}
+    RewriteBase /
+    RewriteRule ^index\.php$ - [L]
+# add a trailing slash to /wp-admin
+    RewriteRule ^([_0-9a-zA-Z-]+/)?wp-admin$ $1wp-admin/ [R=301,L]
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteRule ^([_0-9a-zA-Z-]+/)?(wp-(content|admin|includes).*) $2 [L]
+    RewriteRule ^([_0-9a-zA-Z-]+/)?(.*\.php)$ $2 [L]
+    RewriteRule . /index.php [L]
+{% else %}
+    RewriteBase /
+    RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+    RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+    RewriteRule ^index\.php$ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . /index.php [L]
+{% endif %}
+  </Directory>
+{% if item.subdirs is defined %}
+{% for subdir in item.subdirs %}
+Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
+
+<Directory {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs>
+    AllowOverride {{ item.allow_override | default(apache_allow_override) }}
+    Options {{ item.options | default(apache_options) }}
+{% if apache_vhosts_version == "2.2" %}
+    Order allow,deny
+    Allow from all
+{% else %}
+    Require all granted
+{% endif %}
+    RewriteEngine On
+    RewriteBase /{{ subdir.dir }}/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . /{{ subdir.dir }}/index.php [L]
+</Directory>
+{% endfor %}
+{% endif %}
+{% if apache_global_vhost_based_logs is defined %}
+	ErrorLog {{ apache_vhosts_root }}/{{ item.domain }}/logs/{{ item.domain }}-error.log
+	LogLevel warn
+  CustomLog {{ apache_vhosts_root }}/{{ item.domain }}/logs/{{ item.domain }}-access.log combined
+{% else %}
+	ErrorLog /var/log/{{ apache_daemon }}/{{ item.domain }}-error.log
+	LogLevel warn
+  CustomLog /var/log/{{ apache_daemon }}/{{ item.domain }}-access.log combined
+{% endif %}
+{% if item.php_fpm is defined %}
+<IfModule proxy_fcgi_module>
+    # Enable http authorization headers
+    <IfModule setenvif_module>
+    SetEnvIfNoCase ^Authorization$ "(.+)" HTTP_AUTHORIZATION=$1
+    </IfModule>
+
+    <FilesMatch ".+\.ph(ar|p|tml)$">
+        SetHandler "proxy:unix:/run/php/php-fpm.{{ item.slug }}.sock|fcgi://localhost"
+    </FilesMatch>
+    <FilesMatch ".+\.phps$">
+        # Deny access to raw php sources by default
+        # To re-enable it's recommended to enable access to the files
+        # only in specific virtual host or directory
+       Require all denied
+    </FilesMatch>
+    # Deny access to files without filename (e.g. '.php')
+    <FilesMatch "^\.ph(ar|p|ps|tml)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>
+{% elif apache2_global_php_fpm is defined %}
+<IfModule proxy_fcgi_module>
+    # Enable http authorization headers
+    <IfModule setenvif_module>
+    SetEnvIfNoCase ^Authorization$ "(.+)" HTTP_AUTHORIZATION=$1
+    </IfModule>
+
+    <FilesMatch ".+\.ph(ar|p|tml)$">
+        SetHandler "proxy:unix:/run/php/php-fpm.{{ item.slug }}.sock|fcgi://localhost"
+    </FilesMatch>
+    <FilesMatch ".+\.phps$">
+        # Deny access to raw php sources by default
+        # To re-enable it's recommended to enable access to the files
+        # only in specific virtual host or directory
+       Require all denied
+    </FilesMatch>
+    # Deny access to files without filename (e.g. '.php')
+    <FilesMatch "^\.ph(ar|p|ps|tml)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>
+
+{% endif %}
+</VirtualHost>
+{% endif %}
+{% endif %}

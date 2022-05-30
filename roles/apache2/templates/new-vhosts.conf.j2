@@ -7,6 +7,9 @@
   ServerName {{ vhost.domain }}
   ServerAlias www.{{ vhost.domain }}
   Documentroot "{{ apache_vhosts_root }}/{{ vhost.domain }}/httpdocs"
+{% if vhost.letsencrypt is defined %}
+  Alias /.well-known/acme-challenge /var/lib/dehydrated//acme-challenges/.well-known/acme-challenge
+{% endif%}
   Redirect / https://{{ vhost.domain }}/
 </VirtualHost>
 {% endif %}
@@ -32,6 +35,7 @@
   SSLCertificateFile /etc/letsencrypt/live/{{ vhost.domain }}/cert.pem
   SSLCertificateKeyFile /etc/letsencrypt/live/{{ vhost.domain }}/privkey.pem
   SSLCertificateChainFile /etc/letsencrypt/live/{{ vhost.domain }}/chain.pem
+  Alias /.well-known/acme-challenge /var/lib/dehydrated//acme-challenges/.well-known/acme-challenge
 {% else %}
   SSLCertificateFile {{ vhost.certificate_file }}
   SSLCertificateKeyFile {{ vhost.certificate_key_file }}
