@@ -1,0 +1,48 @@
+- name: Install packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - php-fpm
+    - libapache2-mod-fcgid
+    - "{{ php_extra_packages }}"
+
+- name: Enable modules
+  shell: a2enmod proxy_fcgi setenvif
+
+- name: Enable php-fpm
+  shell: "a2enconf php{{ php_version }}-fpm"
+
+- name: Template php-fpm's www.conf
+  template:
+    src: php-fpm-www.j2
+    dest: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart php-fpm
+
+- name: Nuke lines for idempotency
+  lineinfile:
+    dest: /etc/php/7.4/fpm/php.ini
+    regexp: "{{ item }}"
+    state: absent
+  loop:
+    - "^upload_max_filesize"
+
+- name: Set upload_max_filesize
+  lineinfile:
+    dest: /etc/php/7.4/fpm/php.ini
+    regexp: "^upload_max_filesize"
+    line: "upload_max_filesize = {{ php_upload_max_filesize }}"
+    state: present
+  notify: restart php-fpm
+
+- name: Install php-mysql module
+  apt:
+    name: "php{{ php_version }}-mysql"
+
+- name: Restart apache
+  service:
+    name: apache2
+    state: restarted

@@ -1,9 +1,9 @@
 - name: restart apache
   service:
-    name: httpd
+    name: "{{ apache_service }}"
     state: restarted
 
 - name: restart php-fpm
   service:
-    name: httpd
+    name: php{{ php_version }}-fpm
     state: restarted

@@ -1,0 +1,54 @@
+- name: Install required packages
+  yum:
+    name: php-fpm
+    state: present
+
+- name: Template default config file
+  template:
+    src: php-fpm-www.j2
+    dest: /etc/php-fpm.d/www.conf
+  notify:
+    - restart php-fpm
+
+- name: Nuke lines for idempotency
+  lineinfile:
+    dest: /etc/ssh/sshd_config 
+    regexp: "{{ item }}"
+    state: absent
+  loop:
+    - '^cgi\.fix_pathinfo'
+
+- name: Set cgi.fix_pathinfo
+  lineinfile:
+    dest: /etc/php.ini
+    regexp: '^cgi\.fix_pathinfo'
+    line: "cgi.fix_pathinfo=0"
+    state: present
+  notify:
+    - restart php-fpm
+
+- name: Set correct mpm config
+  template:
+    src: mpm.conf
+    dest: /etc/httpd/conf.modules.d/00-mpm.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart apache
+
+- name: Template php.conf for php-fpm
+  template:
+    src: apache-php.conf.j2
+    dest: /etc/httpd/conf.d/php.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart php-fpm
+
+- name: Ensure php-fpm is enabled & started
+  service:
+    name: php-fpm
+    enabled: yes
+    state: started
