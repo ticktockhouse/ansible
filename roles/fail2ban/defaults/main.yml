@@ -21,3 +21,5 @@ fail2ban_services_default:
     bantime: "604800"
     findtime: "86400"
     maxretry: "5"
+    # Looks like these need 'failregex'
+

@@ -1,4 +1,4 @@
-{% if fail2ban_services is iterable %}
+{% if fail2ban_services is defined and fail2ban_services is iterable %}
 {% for service in fail2ban_services %}
 [{{ service.name }}]
 
