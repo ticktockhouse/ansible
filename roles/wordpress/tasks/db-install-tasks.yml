@@ -52,5 +52,5 @@
     name: "{{ db_user }}"
     password: "{{ lookup('credstash', '{{ db_user }}') }}"
     priv: "{{ mysql_priv }}"
-    host: "{{ web_host }}"
+    host: "{{ wordpress_web_host }}"
     state: present

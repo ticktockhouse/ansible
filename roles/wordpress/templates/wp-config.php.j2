@@ -29,7 +29,7 @@ define( 'DB_USER', '{{ db_user }}' );
 define( 'DB_PASSWORD', '{{ db_password }}' );
 
 /** MySQL hostname */
-define( 'DB_HOST', '{{ db_server }}' );
+define( 'DB_HOST', '{{ wordpress_db_server }}' );
 
 /** Database Charset to use in creating database tables. */
 define( 'DB_CHARSET', 'utf8' );
@@ -86,12 +86,19 @@ define('WP_TEMP_DIR',dirname(__FILE__). '/wp-content/temp/');
 {% if item.multisite is defined and item.multisite is sameas true %}
 ################### MULTISITE STUFF ##################
 
-define('MULTISITE', true);
-define('SUBDOMAIN_INSTALL', false);
-define('DOMAIN_CURRENT_SITE', '{{ item.domain }}');
-define('PATH_CURRENT_SITE', '/');
-define('SITE_ID_CURRENT_SITE', 1);
-define('BLOG_ID_CURRENT_SITE', 1);
+define('WP_ALLOW_MULTISITE', true);
+#define('MULTISITE', true);
+#define('SUBDOMAIN_INSTALL', false);
+{% if 'dev' == env %}
+#define('DOMAIN_CURRENT_SITE', 'dev.{{ item.domain }}');
+{% elif 'staging' == env %}
+#define('DOMAIN_CURRENT_SITE', 'staging.{{ item.domain }}');
+{% else %}
+#define('DOMAIN_CURRENT_SITE', '{{ item.domain }}');
+{% endif %}
+#define('PATH_CURRENT_SITE', '/');
+#define('SITE_ID_CURRENT_SITE', 1);
+#define('BLOG_ID_CURRENT_SITE', 1);
 
 ######################################################
 {% endif %}

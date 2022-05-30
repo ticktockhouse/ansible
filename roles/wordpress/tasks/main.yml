@@ -1,6 +1,15 @@
 - include_tasks: db-loop.yml
   with_items: "{{ wordpress_vhosts }}"
-  when: "'db' in group_names"
+  when:
+    - "'db' in group_names"
+    - wordpress_vhosts is defined and wordpress_vhosts
+  tags: db
+
+- include_tasks: db-loop.yml
+  with_items: "{{ new_wordpress_vhosts }}"
+  when:
+    - "'db' in group_names"
+    - new_wordpress_vhosts is defined and new_wordpress_vhosts
   tags: db
 
 - include_tasks: db-loop.yml
@@ -15,16 +24,22 @@
   when: "'web' in group_names"
 
 - debug:
-    var: wordpress_vhosts
-
-- debug:
     var: wordpress_path
 
 #- pause:
 
 - include_tasks: web-vhosts-loop.yml
   with_items: "{{ wordpress_vhosts }}"
-  when: "'web' in group_names"
+  when:
+    - "'web' in group_names"
+    - wordpress_vhosts is defined and wordpress_vhosts
+
+- include_tasks: web-vhosts-loop.yml
+  with_items: "{{ new_wordpress_vhosts }}"
+  when:
+    - "'web' in group_names"
+    - new_wordpress_vhosts is defined and new_wordpress_vhosts
+
 
 - include_tasks: web-subdirs-loop.yml
   with_items: "{{ wordpress_subdirs }}"

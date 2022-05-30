@@ -112,7 +112,7 @@
 
 - name: Ensure python passlib is installed
   package:
-    name: python-passlib
+    name: python3-passlib
     state: present
 
 # TODO: Make this conditional
