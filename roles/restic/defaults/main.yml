@@ -12,3 +12,4 @@ restic_initrepo: yes
 restic_bucket_name: ticktockhouse-backups
 restic_backend: backblaze
 restic_repo_init: yes
+restic_digitalocean_region: ams3

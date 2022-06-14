@@ -1,8 +1,11 @@
 - include_vars: b2.yml
   when: restic_backend == 'backblaze'
 
-- include_vars: s3.yml
-  when: restic_backend == 's3'
+- include_vars: aws-s3.yml
+  when: restic_backend == 'aws-s3'
+
+- include_vars: spaces-s3.yml
+  when: restic_backend == 'spaces-s3'
 
 - include_tasks: install.yml
 
