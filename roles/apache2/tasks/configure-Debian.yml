@@ -152,6 +152,17 @@
     - apache_create_vhosts
     - new_new_vhosts is defined and new_new_vhosts
 
+- name: Add "new wordpress" vhost symlinks in sites-enabled.
+  file:
+    src: "{{ apache_conf_path }}/sites-available/{{ item.domain }}.conf"
+    dest: "{{ apache_conf_path }}/sites-enabled/{{ item.domain }}.conf"
+    state: link
+  notify: restart apache
+  loop: "{{ new_wordpress_vhosts }}"
+  when:
+    - apache_create_vhosts
+    - new_wordpress_vhosts is defined and new_wordpress_vhosts
+
 - name: Remove default vhost in sites-enabled.
   file:
     path: "{{ apache_conf_path }}/sites-enabled/{{ apache_default_vhost_filename }}"
