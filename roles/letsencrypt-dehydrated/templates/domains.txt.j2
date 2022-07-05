@@ -1,11 +1,21 @@
 {% if new_new_vhosts is defined and new_new_vhosts %}
 {% for vhost in new_new_vhosts %}
-{{ vhost.domain }} www.{{ vhost.domain }} dev.{{ vhost.domain }}
+{% if vhost.live is defined %}
+{{ vhost.domain }} www.{{ vhost.domain }}
+{% endif %}
+{% if vhost.dev is defined %}
+dev.{{ vhost.domain }}
+{% endif %}
 {% endfor %}
 {% endif %}
 {% if wordpress_vhosts is defined %}
 {% for vhost in wordpress_vhosts %}
-{{ vhost.domain }} www.{{ vhost.domain }} dev.{{ vhost.domain }}
+{% if vhost.live is defined %}
+{{ vhost.domain }} www.{{ vhost.domain }}
+{% endif %}
+{% if vhost.dev is defined %}
+dev.{{ vhost.domain }}
+{% endif %}
 {% endfor %}
 {% endif %}
 {% if new_wordpress_vhosts is defined %}
