@@ -87,6 +87,24 @@ define('WP_TEMP_DIR',dirname(__FILE__). '/wp-content/temp/');
 ################### MULTISITE STUFF ##################
 
 define('WP_ALLOW_MULTISITE', true);
+define('MULTISITE', true);
+define('SUBDOMAIN_INSTALL', false);
+{% if 'dev' == env %}
+define('DOMAIN_CURRENT_SITE', 'dev.{{ item.domain }}');
+{% elif 'staging' == env %}
+define('DOMAIN_CURRENT_SITE', 'staging.{{ item.domain }}');
+{% else %}
+define('DOMAIN_CURRENT_SITE', '{{ item.domain }}');
+{% endif %}
+define('PATH_CURRENT_SITE', '/');
+define('SITE_ID_CURRENT_SITE', 1);
+define('BLOG_ID_CURRENT_SITE', 1);
+
+######################################################
+{% elseif item.multisite is defined and item.multisite is sameas false %}
+################### MULTISITE STUFF ##################
+
+define('WP_ALLOW_MULTISITE', true);
 #define('MULTISITE', true);
 #define('SUBDOMAIN_INSTALL', false);
 {% if 'dev' == env %}
