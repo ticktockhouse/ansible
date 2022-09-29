@@ -1,4 +1,5 @@
 php_fpm_service_name: "php{{ php_version }}-fpm"
 apache_service: "apache2"
 apache_user: "www-data"
-php_fpm_socket: /var/run/php/php{{ php_version }}-fpm.sock
+php_fpm_default_socket: /var/run/php/php{{ php_version }}-fpm-default.sock
+php_fpm_single_socket: /var/run/php/php{{ php_version }}-fpm-{{ item.slug }}.sock

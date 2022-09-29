@@ -1,0 +1,13 @@
+[{{ item.slug }}]
+    user = {{ item.slug }}
+    group = {{ item.slug }}
+    listen = {{ php_fpm_single_socket }}
+    listen.owner = www-data
+    listen.group = www-data
+ 
+    pm = {{ item.pm_type | default("ondemand")}}
+    pm.max_children = {{ item.php_max_children | default("30") }}
+    pm.start_servers = {{ item.php_start_servers | default("0") }}
+    pm.min_spare_servers = {{ item.php_min_spare_servers | default("-1") }}
+    pm.max_spare_servers = {{ item.php_max_spare_servers | default("1") }}
+    pm.process_idle_timeout = {{ item.php_process_idle_timeout | default ("1") }}s
