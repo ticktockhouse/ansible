@@ -1,0 +1,25 @@
+[www]
+{% if php_fpm_config == "socket" %}
+    user = {{ apache_user }}
+    group = {{ apache_user }}
+    listen = {{ php_fpm_default_socket }}
+    listen.owner = {{ apache_user }}
+    listen.group = {{ apache_user }}
+    listen.mode = 0660
+{% else %}
+    listen = 127.0.0.1:9000
+{% endif %}
+    listen.allowed_clients = 127.0.0.1
+
+    pm = ondemand
+    pm.max_children = {{ pm_max_children }}
+    pm.start_servers = {{ pm_start_servers }}
+    pm.min_spare_servers = {{ pm_min_spare_servers }}
+    pm.max_spare_servers = {{ pm_max_spare_servers }}
+    pm.process_idle_timeout = {{ item.php_process_idle_timeout | default ("3") }}s
+    pm.status_path = /fpm-status-default
+    slowlog = /var/log/php-fpm/www-slow.log
+    php_admin_value[error_log] = /var/log/php-fpm/www-error.log
+    php_admin_flag[log_errors] = on
+    php_value[session.save_handler] = files
+    php_value[session.save_path] = /var/lib/php/session

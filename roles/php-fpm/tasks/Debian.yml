@@ -1,3 +1,6 @@
+- set_fact:
+    single_php_domains: "{{ new_wordpress_vhosts | selectattr('php_fpm', 'defined') }}"
+
 - name: Install packages
   apt:
     name: "{{ item }}"
@@ -13,31 +16,43 @@
 - name: Enable php-fpm
   shell: "a2enconf php{{ php_version }}-fpm"
 
-- name: Template php-fpm's www.conf
+- name: Template default pool config
   template:
-    src: php-fpm-www.j2
-    dest: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
+    src: php-fpm-default.j2
+    dest: "/etc/php/{{ php_version }}/fpm/pool.d/default.conf"
     owner: root
     group: root
     mode: 0644
   notify: restart php-fpm
 
+- name: Template pools for single domains
+  template:
+    src: php-fpm-single.j2
+    dest: "/etc/php/{{ php_version }}/fpm/pool.d/{{ item.slug }}.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart php-fpm
+  loop: "{{ single_php_domains }}"
+
+# NB Add modifications for extra lines in php.ini to the `php_ini_tweaks` var (see defaults/main.yml)
 - name: Nuke lines for idempotency
   lineinfile:
-    dest: /etc/php/7.4/fpm/php.ini
-    regexp: "{{ item }}"
+    dest: /etc/php/{{ php_version }}/fpm/php.ini
+    regexp: "^{{ item | split(' ') | first}}"
     state: absent
-  loop:
-    - "^upload_max_filesize"
+  loop: "{{ php_ini_tweaks }}"
 
-- name: Set upload_max_filesize
+- name: Set php_ini_tweaks
   lineinfile:
-    dest: /etc/php/7.4/fpm/php.ini
-    regexp: "^upload_max_filesize"
-    line: "upload_max_filesize = {{ php_upload_max_filesize }}"
+    dest: /etc/php/{{ php_version }}/fpm/php.ini
+    regexp: "^{{ item | split(' ') | first}}"
+    line: "{{ item }}"
     state: present
   notify: restart php-fpm
-
+  loop: "{{ php_ini_tweaks }}"
+###
+  
 - name: Install php-mysql module
   apt:
     name: "php{{ php_version }}-mysql"
