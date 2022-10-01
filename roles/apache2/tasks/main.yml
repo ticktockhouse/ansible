@@ -45,6 +45,7 @@
 # Configure Apache.
 - name: Configure Apache.
   include_tasks: "configure-{{ ansible_os_family }}.yml"
+  tags: config
 
 - name: Add server status config
   template:

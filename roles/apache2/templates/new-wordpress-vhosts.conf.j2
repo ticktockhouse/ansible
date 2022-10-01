@@ -113,7 +113,7 @@ Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
     </IfModule>
 
     <FilesMatch ".+\.ph(ar|p|tml)$">
-        SetHandler "proxy:unix:/run/php/php-fpm.{{ item.slug }}.sock|fcgi://localhost"
+        SetHandler "proxy:unix:{{ php_fpm_single_socket }}|fcgi://localhost"
     </FilesMatch>
     <FilesMatch ".+\.phps$">
         # Deny access to raw php sources by default
@@ -134,7 +134,7 @@ Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
     </IfModule>
 
     <FilesMatch ".+\.ph(ar|p|tml)$">
-        SetHandler "proxy:unix:{{ php_fpm_socket }}|fcgi://localhost"
+        SetHandler "proxy:unix:{{ php_fpm_default_socket }}|fcgi://localhost"
     </FilesMatch>
     <FilesMatch ".+\.phps$">
         # Deny access to raw php sources by default
@@ -267,7 +267,7 @@ Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
     </IfModule>
 
     <FilesMatch ".+\.ph(ar|p|tml)$">
-        SetHandler "proxy:unix:/run/php/php-fpm.{{ item.slug }}.sock|fcgi://localhost"
+        SetHandler "proxy:unix:{{ php_fpm_single_socket }}|fcgi://localhost"
     </FilesMatch>
     <FilesMatch ".+\.phps$">
         # Deny access to raw php sources by default
@@ -288,7 +288,7 @@ Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
     </IfModule>
 
     <FilesMatch ".+\.ph(ar|p|tml)$">
-        SetHandler "proxy:unix:{{ php_fpm_socket }}|fcgi://localhost"
+        SetHandler "proxy:unix:{{ php_fpm_default_socket }}|fcgi://localhost"
     </FilesMatch>
     <FilesMatch ".+\.phps$">
         # Deny access to raw php sources by default
@@ -311,6 +311,7 @@ Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
 <VirtualHost {{ apache_listen_ip }}:80>
   ServerAdmin {{ apache_server_admin }}
   ServerName {{ item.domain }}
+  ServerAlias www.{{ item.domain }}
   {% if apache_global_vhost_based_logs is defined %}
   ErrorLog {{ apache_vhosts_root }}/{{ item.domain }}/logs/{{ item.domain }}-error.log
   LogLevel warn
@@ -331,6 +332,7 @@ Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
 <VirtualHost {{ apache_listen_ip }}:443>
   ServerAdmin {{ apache_server_admin }}
   ServerName {{ item.domain }}
+  ServerAlias www.{{ item.domain }}
   DocumentRoot "{{ apache_vhosts_root }}/{{ item.domain }}/httpdocs"
   {% if apache_global_vhost_based_logs is defined %}
   ErrorLog {{ apache_vhosts_root }}/{{ item.domain }}/logs/{{ item.domain }}-error.log
@@ -421,7 +423,7 @@ Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
     </IfModule>
 
     <FilesMatch ".+\.ph(ar|p|tml)$">
-        SetHandler "proxy:unix:/run/php/php-fpm.{{ item.slug }}.sock|fcgi://localhost"
+        SetHandler "proxy:unix:{{ php_fpm_single_socket }}|fcgi://localhost"
     </FilesMatch>
     <FilesMatch ".+\.phps$">
         # Deny access to raw php sources by default
@@ -442,7 +444,7 @@ Alias /{{ subdir.dir }} {{ apache_vhosts_root }}/{{ subdir.slug }}/httpdocs
     </IfModule>
 
     <FilesMatch ".+\.ph(ar|p|tml)$">
-        SetHandler "proxy:unix:{{ php_fpm_socket }}|fcgi://localhost"
+        SetHandler "proxy:unix:{{ php_fpm_default_socket }}|fcgi://localhost"
     </FilesMatch>
     <FilesMatch ".+\.phps$">
         # Deny access to raw php sources by default

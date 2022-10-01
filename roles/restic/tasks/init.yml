@@ -9,7 +9,7 @@
   shell: "{{ restic_bindir }}/restic -r {{ restic_repo }} init --password-command='echo {{ restic_password }}'"
   environment: "{{ restic_env }}"
   register: repo_init
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: Template the restic env var config file
   template:

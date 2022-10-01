@@ -5,9 +5,13 @@
 
 - include_tasks: install-debian-package.yml
   when: ansible_os_family == 'Debian'
+  tags:
+    - netdata-install
 
 - include_tasks: install-redhat-package.yml
   when: ansible_os_family == 'RedHat'
+  tags:
+    - netdata-install
 
 - include_tasks: configure.yml
   tags: configure

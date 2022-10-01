@@ -1,0 +1,2 @@
+- include_tasks: compose-loop.yml
+  loop: "{{ compose_deployments }}"
