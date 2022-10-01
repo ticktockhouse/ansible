@@ -1,0 +1,31 @@
+- name: Template the Caddyfile
+  template:
+    src: Caddyfile.j2
+    dest: /etc/caddy/Caddyfile
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Ensure "sites-enabled" dir exists
+  file:
+    state: directory
+    path: /etc/caddy/sites-enabled
+    owner: root
+    group: root
+    mode: 0755
+  notify: restart caddy
+
+- name: Add reverse proxy sites
+  template:
+    src: caddy-reverse-proxy.j2
+    dest: "/etc/caddy/sites-enabled/{{ item.site }}.caddy"
+    owner: root
+    group: root
+    mode: 0644
+  loop: "{{ caddy_reverse_proxy_sites }}"
+  notify: restart caddy
+
+- name: Validate the config
+  shell: caddy validate
+  args:
+    chdir: /etc/caddy

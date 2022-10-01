@@ -1,0 +1,14 @@
+#jinja2: lstrip_blocks: "True"
+{{ item.site }}  {
+  log {
+    output stderr
+  }
+  reverse_proxy * {
+    to {{ item.backend }}
+    {% if item.http_transport_options is defined and item.http_transport_options %}
+    transport http {
+    {{ item.http_transport_options }}
+    }
+    {% endif %}
+  }
+}

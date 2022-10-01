@@ -1,5 +1,6 @@
 # TODO - do the DB stuff beforehand and take this out as it's mixing DB and web stuff
 # Set facts here only, then handoff to another list of tasks to actually do stuff!!!
+# TODO - db_user stuff needs to support more options - so we don't end up with same passwords across envs, for instance..
 
 ### DB password credstash stuff
 - name: Set DB name

@@ -9,3 +9,8 @@ pm_max_children: "50"
 pm_start_servers: "5"
 pm_min_spare_servers: "5"
 pm_max_spare_servers: "35"
+
+php_ini_tweaks:
+  - "upload_max_filesize = {{ php_upload_max_filesize }}"
+  - "max_file_uploads = {{ php_max_file_uploads }}"
+  - "post_max_size = {{ php_post_max_size }}"

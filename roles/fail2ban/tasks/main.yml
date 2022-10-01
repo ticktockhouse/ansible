@@ -2,10 +2,10 @@
 - name: Load a variable file based on the OS type, or a default if not found. Using free-form to specify the file.
   include_vars: "{{ ansible_os_family }}.yml"
 
-- include: centos.yml
+- include_tasks: centos.yml
   when: ansible_distribution == 'CentOS'
 
-- include: debian.yml
+- include_tasks: debian.yml
   when: ansible_os_family == 'Debian'
 
 - include: common.yml

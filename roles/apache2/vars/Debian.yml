@@ -15,4 +15,5 @@ apache_ports_configuration_items:
 
 apache_letsencrypt_conf_location: /etc/{{ apache_service }}/conf-available/letsencrypt.conf
 apache_letsencrypt_wellknown_location: /var/www/letsencrypt
-php_fpm_socket: /var/run/php/php{{ php_version }}-fpm.sock
+php_fpm_default_socket: /var/run/php/php{{ php_version }}-fpm-default.sock
+php_fpm_single_socket: /var/run/php/php{{ php_version }}-fpm-{{ item.slug }}.sock

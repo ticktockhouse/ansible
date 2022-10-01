@@ -1,4 +1,5 @@
 restic_env:
   AWS_ACCESS_KEY_ID: "{{ restic_access_key_id }}"
   AWS_SECRET_ACCESS_KEY: "{{ restic_secret_access_key }}"
-restic_repo: "s3:{{ restic_digitalocean_region }}.digitaloceanspaces.com/{{ restic_bucket_name }}/{{ restic_slug }}"
+restic_backup_repo: "s3:{{ restic_digitalocean_region }}.digitaloceanspaces.com/{{ restic_backup_bucket_name }}/{{ restic_slug }}"
+restic_transfer_repo: "s3:{{ restic_digitalocean_region }}.digitaloceanspaces.com/{{ restic_transfer_bucket_name }}/{{ restic_slug }}"

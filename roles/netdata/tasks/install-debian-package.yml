@@ -2,24 +2,42 @@
   apt_key:
     url: "{{ netdata_package_gpg_url }}"
     state: present
+  tags:
+    - netdata-install
 
 - name: Add the netdata package repo
   apt_repository:
     repo: "{{ netdata_debian_repo }}"
     state: present
     filename: netdata
+  tags:
+    - netdata-install
+
+# - name: Install the package
+#   apt:
+#     name: netdata
+#     state: present
+#     update_cache: yes
+#   tags:
+#     - netdata-install
+#   notify: Restart Netdata
 
 - name: Install the package
   apt:
     name: netdata
-    state: present
+    state: latest
     update_cache: yes
+  tags:
+    - netdata-install
+  notify: Restart Netdata
 
 - name: Create the necessary dir
   file:
     state: directory
     recurse: yes
     path: /etc/netdata/conf.d 
+  tags:
+    - netdata-install
 
 - name: Add the netdata.conf pointer file
   template:
@@ -28,4 +46,5 @@
     owner: root
     group: root
     mode: 0644
-
+  tags:
+    - netdata-install

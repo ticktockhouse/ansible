@@ -1,3 +1,6 @@
+# TODO - change the permissions of the WP install at the end - simple 0755 for dirs an 0644 for files
+# TODO - Make DB user support a more clever way of specifying - e.g. we're getting different envs with the same password
+
 - include_tasks: db-loop.yml
   with_items: "{{ wordpress_vhosts }}"
   when:

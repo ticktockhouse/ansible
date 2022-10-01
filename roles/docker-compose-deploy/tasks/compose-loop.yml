@@ -1,0 +1,37 @@
+- name: Create required directories for volume mounts
+  file:
+    state: directory
+    recurse: yes
+    path: "{{ item }}"
+    owner: jerry
+    group: jerry
+    mode: 0755
+  loop:
+    - "{{ docker_compose_volume_mounts }}"
+  tags: dirs
+      
+- name: Ensure /opt/compose subdir exists
+  file:
+    state: directory
+    path: "/opt/compose/{{ item }}"
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Template docker-compose.yml
+  template:
+    src: ../docker/{{ item }}/docker-compose.yml
+    dest: /opt/compose/{{ item }}/docker-compose.yml
+
+- name: Template docker-compose .env file
+  template:
+    src: ../docker/{{ item }}/docker-compose.env
+    dest: /opt/compose/{{ item }}/.env
+
+- debug:
+    var: playbook_dir
+
+- name: Copy any files over that are needed by the docker-compose stack
+  synchronize:
+    src: "{{ playbook_dir }}/files/{{ item }}/"
+    dest: /opt/compose/{{item}}/
